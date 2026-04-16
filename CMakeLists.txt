@@ -6,6 +6,10 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 add_executable(chess_v1
     src/main.c
+    src/board.c 
+    src/utils.c 
+    src/piece.c
+    src/render.c
 )
 
 target_include_directories(chess_v1 PRIVATE src)

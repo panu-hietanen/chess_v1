@@ -1,21 +1,19 @@
 #include "raylib.h"
 #include <stdio.h>
 
-int main() {
-	const int screenWidth = 800;
-	const int screenHeight = 450;
-	InitWindow(screenWidth, screenHeight, "Chess in C");
+#include "config.h"
+#include "utils.h"
+#include "piece.h"
 
-	Image im = LoadImage("C:/Dev/C/chess_v1/resources/white-knight.png");
+int main() {
+	InitWindow(SCREEN_W, SCREEN_H, "Chess in C");
+
+	Piece p = { .x = 0, .y = 0, .type = PIECE_PAWN, .colour = PIECE_WHITE };
+
+	char name[MAX_PATH_LENGTH];
+	get_piece_path(name, &p);
+	Image im = LoadImage(name);
 	ImageResize(&im, im.width / 2, im.height / 2);
-	if (IsImageValid(im))
-	{
-		printf("Image is valid");
-	}
-	else
-	{
-		printf("Image is invalid");
-	}
 	Texture2D rook_white = LoadTextureFromImage(im);
 	UnloadImage(im);
 
@@ -26,7 +24,7 @@ int main() {
 		BeginDrawing();
 		{
 			ClearBackground(BLACK);
-			DrawTexture(rook_white, screenWidth / 2 - rook_white.width / 2, screenHeight / 2 - rook_white.height / 2, WHITE);
+			DrawTexture(rook_white, SCREEN_W / 2 - rook_white.width / 2, SCREEN_H / 2 - rook_white.height / 2, WHITE);
 		}
 		EndDrawing();
 	}

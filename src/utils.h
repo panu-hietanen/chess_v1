@@ -4,6 +4,6 @@
 #include "config.h"
 #include "piece.h"
 
-void get_piece_path(const char* name, const Piece* p);
+void get_piece_path(char* name, const Piece* p);
 
 #endif //UTILS_H__

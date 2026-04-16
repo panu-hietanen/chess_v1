@@ -1,14 +1,20 @@
 #ifndef CONFIG_H__
 #define CONFIG_H__
 
-#define BOARD_W 1000
-#define BOARD_H 1000
-#define PIECE_W 20
-#define PIECE_H 20
+#define CELL_SIZE 80
+#define BOARD_CELLS 8
+#define BOARD_PX (CELL_SIZE * BOARD_CELLS)
+#define BOARD_COLOUR_LIGHT GetColor(0xb58762ff)
+#define BOARD_COLOUR_DARK GetColor(0xefd9b5ff)
 
-#define SCALE 0.5
+#define PIECE_W 70
+#define PIECE_H 70
+
 #define SCREEN_W 1280
 #define SCREEN_H 720
+
+#define BOARD_OFFSET_X  ((SCREEN_W - BOARD_PX) / 2)
+#define BOARD_OFFSET_Y  ((SCREEN_H - BOARD_PX) / 2)
 
 #define RESOURCES_PATH "C:/Dev/C/chess_v1/resources/"
 #define MAX_PATH_LENGTH 48

@@ -5,6 +5,17 @@
 
 #include "piece.h"
 
-Texture2D create_texture(const Piece* p);
+typedef struct {
+	Texture2D data[2][6];
+} PieceTextures;
+
+void create_texture(Texture2D* t, const Piece* p);
+
+void board_draw();
+
+void piece_textures_load  (PieceTextures* pt);
+void piece_textures_unload(PieceTextures* pt);
+
+void piece_array_draw(const PieceArray* arr, const PieceTextures* pt);
 
 #endif //RENDER_H__

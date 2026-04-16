@@ -1,6 +1,9 @@
+#include <string.h>
+#include <stdio.h>
+
 #include "utils.h"
 
-void get_piece_path(const char* name, const Piece* p)
+void get_piece_path(char* name, const Piece* p)
 {
 	char colour[6];
 	if (p->colour == PIECE_WHITE)

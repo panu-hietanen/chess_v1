@@ -4,19 +4,17 @@
 #include "config.h"
 #include "utils.h"
 #include "piece.h"
+#include "render.h"
 
 int main() {
 	InitWindow(SCREEN_W, SCREEN_H, "Chess in C");
 
-	Piece p = { .x = 0, .y = 0, .type = PIECE_PAWN, .colour = PIECE_WHITE };
+	PieceTextures pt;
 
-	char name[MAX_PATH_LENGTH];
-	get_piece_path(name, &p);
-	Image im = LoadImage(name);
-	ImageResize(&im, im.width / 2, im.height / 2);
-	Texture2D rook_white = LoadTextureFromImage(im);
-	UnloadImage(im);
+	piece_textures_load(&pt);
 
+	PieceArray whiteArr = piece_array_init_game(PIECE_WHITE);
+	PieceArray blackArr = piece_array_init_game(PIECE_BLACK);
 
 	SetTargetFPS(60);
 	while (!WindowShouldClose())
@@ -24,12 +22,13 @@ int main() {
 		BeginDrawing();
 		{
 			ClearBackground(BLACK);
-			DrawTexture(rook_white, SCREEN_W / 2 - rook_white.width / 2, SCREEN_H / 2 - rook_white.height / 2, WHITE);
+			board_draw();
+			piece_array_draw(&whiteArr, &pt);
+			piece_array_draw(&blackArr, &pt);
 		}
 		EndDrawing();
 	}
-	UnloadTexture(rook_white);
-
+	piece_textures_unload(&pt);
 
 	CloseWindow();
 	return 0;

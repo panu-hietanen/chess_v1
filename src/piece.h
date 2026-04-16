@@ -15,9 +15,10 @@ typedef enum {
 typedef enum { PIECE_WHITE, PIECE_BLACK } PieceColour;
 
 typedef struct {
-	double x, y;
+	int x, y;
 	PieceType type;
 	PieceColour colour;
+	int active;
 } Piece;
 
 typedef struct {
@@ -26,9 +27,10 @@ typedef struct {
 	size_t cap;
 } PieceArray;
 
-PieceArray piece_array_init(size_t capacity);
-void       piece_array_push(PieceArray* arr, const Piece b);
-void       piece_array_pop (PieceArray* arr);
-void       piece_array_free(PieceArray* arr);
+PieceArray piece_array_init     (size_t capacity);
+PieceArray piece_array_init_game(PieceColour colour);
+void       piece_array_push     (PieceArray* arr, const Piece b);
+void       piece_array_pop      (PieceArray* arr);
+void       piece_array_free     (PieceArray* arr);
 
 #endif //PIECE_H__

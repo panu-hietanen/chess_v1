@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "piece.h"
 #include "render.h"
+#include "board.h"
 
 int main() {
 	InitWindow(SCREEN_W, SCREEN_H, "Chess in C");
@@ -15,6 +16,10 @@ int main() {
 
 	PieceArray whiteArr = piece_array_init_game(PIECE_WHITE);
 	PieceArray blackArr = piece_array_init_game(PIECE_BLACK);
+
+	Board b = board_init();
+	board_register_pieces(&b, &whiteArr);
+	board_register_pieces(&b, &blackArr);
 
 	SetTargetFPS(60);
 	while (!WindowShouldClose())

@@ -2,12 +2,13 @@
 #define BOARD_H__
 
 #include "config.h"
+#include "piece.h"
 
 typedef struct {
-	double width, height;
+	int state[BOARD_CELLS][BOARD_CELLS];
 } Board;
 
-void board_draw();
-
+Board board_init();
+void board_register_pieces(const Board* b, const PieceArray* arr);
 
 #endif //BOARD_H__

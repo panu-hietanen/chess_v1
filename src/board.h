@@ -13,7 +13,6 @@ typedef struct {
 
 Board board_init();
 Board board_init_game();
-void board_register_pieces(Board* b, const PieceArray* arr);
 
 bool board_register_move(Board* b, Point from, Point to);
 void board_next_turn(Board* b);

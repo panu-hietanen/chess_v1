@@ -8,11 +8,6 @@
 #include "render.h"
 #include "board.h"
 
-Point vec2point(Vector2 v)
-{
-	return (Point) { .x = v.x, .y = v.y };
-}
-
 int main() {
 	InitWindow(SCREEN_W, SCREEN_H, "Chess in C");
 	PieceTextures pt;
@@ -27,6 +22,7 @@ int main() {
 	{
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
 		{
+select:
 			Vector2 mouseCoords = GetMousePosition();
 			float x = mouseCoords.x;
 			float y = mouseCoords.y;
@@ -46,6 +42,7 @@ int main() {
 					{
 						clickedState = false;
 						selectedPiece = point_invalid();
+						if (board_select_valid(&b, newSelection)) goto select;
 					}
 				}
 				else
@@ -70,7 +67,9 @@ int main() {
 		}
 		BeginDrawing();
 		{
-			ClearBackground(BLACK);
+			ClearBackground(DARKBROWN);
+			Color turnColour = (b.turn == PIECE_WHITE) ? WHITE : BLACK;
+			DrawRectangle(BOARD_OFFSET_X / 2, SCREEN_H / 2, 50, 50, turnColour);
 			board_draw();
 			board_state_draw(&b, &pt);
 			board_draw_clicked(&b, &pt, selectedPiece);

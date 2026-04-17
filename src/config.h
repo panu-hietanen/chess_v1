@@ -1,7 +1,7 @@
 #ifndef CONFIG_H__
 #define CONFIG_H__
 
-#define CELL_SIZE             80.0
+#define CELL_SIZE             80
 #define BOARD_CELLS			  8
 #define BOARD_PX		      (CELL_SIZE * BOARD_CELLS)
 #define BOARD_COLOUR_LIGHT    GetColor(0xb58762ff)

@@ -10,7 +10,7 @@ typedef struct {
 	Texture2D data[2][6];
 } PieceTextures;
 
-void create_texture(Texture2D* t, const Piece* p);
+void create_texture(Texture2D* t, PieceColour pColour, PieceType pType);
 
 void board_draw();
 void board_draw_piece(const Board* b, const PieceTextures* pt, const Point p);
@@ -19,7 +19,5 @@ void board_draw_clicked(const Board* b, const PieceTextures* pt, Point clicked);
 
 void piece_textures_load  (PieceTextures* pt);
 void piece_textures_unload(PieceTextures* pt);
-
-void piece_array_draw(const PieceArray* arr, const PieceTextures* pt);
 
 #endif //RENDER_H__

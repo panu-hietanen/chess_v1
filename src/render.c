@@ -4,10 +4,10 @@
 
 #include "piece.h"
 
-void create_texture(Texture2D* t, const Piece* p)
+void create_texture(Texture2D* t, PieceColour pColour, PieceType pType)
 {
 	char name[MAX_PATH_LENGTH];
-	get_piece_path(name, p);
+	get_piece_path(name, pColour, pType);
 
 	Image im = LoadImage(name);
 	ImageResize(&im, PIECE_W, PIECE_H);
@@ -74,12 +74,11 @@ void board_draw_clicked(const Board* b, const PieceTextures* pt, Point clicked)
 
 void piece_textures_load(PieceTextures* pt)
 {
-	for (int colour = 0; colour < 2; ++colour)
+	for (PieceColour colour = 0; colour < 2; ++colour)
 	{
-		for (int type = 0; type < 6; ++type)
+		for (PieceType type = 0; type < 6; ++type)
 		{
-			Piece p = { .colour = colour, .type = type };
-			create_texture(&pt->data[colour][type], &p);
+			create_texture(&pt->data[colour][type], colour, type);
 		}
 	}
 }
@@ -92,18 +91,5 @@ void piece_textures_unload(PieceTextures* pt)
 		{
 			UnloadTexture(pt->data[colour][type]);
 		}
-	}
-}
-
-void piece_array_draw(const PieceArray* arr, const PieceTextures* pt)
-{
-	for (int i = 0; i < arr->len; ++i)
-	{
-		Piece p = arr->data[i];
-		if (!p.active) continue;
-
-		int sx = BOARD_OFFSET_X + p.x * CELL_SIZE;
-		int sy = BOARD_OFFSET_Y + (BOARD_CELLS - p.y) * CELL_SIZE;
-		DrawTexture(pt->data[p.colour][p.type], sx, sy, WHITE);
 	}
 }

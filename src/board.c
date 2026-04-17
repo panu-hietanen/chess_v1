@@ -49,15 +49,6 @@ Board board_init_game()
 	return b;
 }
 
-void board_register_pieces(Board* b, const PieceArray* arr)
-{
-	for (int i = 0; i < arr->len; ++i)
-	{
-		Piece p = arr->data[i];
-		b->state[p.x][p.y] = p.type + NUM_PIECE_TYPES * p.colour;
-	}
-}
-
 bool board_register_move(Board* b, Point from, Point to)
 {
 	int piece = b->state[from.x][from.y];
@@ -87,19 +78,12 @@ bool board_move_valid(const Board* b, Point from, Point to)
 	switch (type)
 	{
 	case PIECE_PAWN:
-		if (!move_valid_pawn(from, to, b->turn) && !move_valid_pawn_capture(from, to, b->turn)) return false;
-		if (!move_valid_pawn(from, to, b->turn))
-		{
-			int capturePiece = b->state[to.x][to.y];
-			if (capturePiece < 0) return false;
-			PieceColour captureColour = get_piece_colour(capturePiece);
-			PieceType captureType = get_piece_type(capturePiece);
-			if (captureColour == colour) return false;
-		}
-		else if (!move_valid_pawn_capture(from, to, b->turn))
-		{
+		bool canMove = move_valid_pawn(from, to, b->turn);
+		bool canCapture = move_valid_pawn_capture(from, to, b->turn);
 
-		}
+		if (!canMove && !canCapture) return false;
+		if (!canCapture && board_blocked_pawn(b, from, to)) return false;
+		if (!canMove && b->state[to.x][to.y] < 0) return false;
 		break;
 	case PIECE_ROOK:
 		if (!move_valid_rook(from, to)) return false;
@@ -114,6 +98,7 @@ bool board_move_valid(const Board* b, Point from, Point to)
 		break;
 	case PIECE_QUEEN:
 		if (!move_valid_queen(from, to)) return false;
+		if (board_blocked_bishop(b, from, to)) return false;
 		break;
 	case PIECE_KING:
 		if (!move_valid_king(from, to)) return false;
@@ -127,7 +112,12 @@ bool board_move_valid(const Board* b, Point from, Point to)
 
 bool board_blocked_pawn(const Board* b, Point from, Point to)
 {
-	return false;
+	switch (b->turn) {
+	case PIECE_WHITE:
+		return b->state[from.x][from.y + 1] >= 0;
+	case PIECE_BLACK:
+		return b->state[from.x][from.y - 1] >= 0;
+	}
 }
 
 bool board_blocked_rook(const Board* b, Point from, Point to)

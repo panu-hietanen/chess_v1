@@ -3,10 +3,10 @@
 
 #include "utils.h"
 
-void get_piece_path(char* name, const Piece* p)
+void get_piece_path(char* name, PieceColour pColour, PieceType pType)
 {
 	char colour[6];
-	if (p->colour == PIECE_WHITE)
+	if (pColour == PIECE_WHITE)
 	{
 		strcpy(colour, "white");
 	}
@@ -16,7 +16,7 @@ void get_piece_path(char* name, const Piece* p)
 	}
 
 	char piece[11];
-	switch (p->type)
+	switch (pType)
 	{
 	case PIECE_PAWN:
 		strcpy(piece, "pawn.png");

@@ -19,33 +19,53 @@ int main() {
 	piece_textures_load(&pt);
 
 	Board b = board_init_game();
-	bool click_state = false;
+	Point selectedPiece = point_invalid();
+	bool clickedState = false;
 
 	SetTargetFPS(60);
 	while (!WindowShouldClose())
 	{
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
 		{
-			Vector2 mouse_coords = GetMousePosition();
-			float x = mouse_coords.x;
-			float y = mouse_coords.y;
+			Vector2 mouseCoords = GetMousePosition();
+			float x = mouseCoords.x;
+			float y = mouseCoords.y;
 			if (board_mouse_over(x, y))
 			{
-				b.clicked = board_mouse_coords(x, y);
-				if (board_click_valid(&b)) 
+				Point newSelection = board_mouse_coords(x, y);
+				if (clickedState)
 				{
-					click_state = true;
-					//board_register_move(&b, clicked, (Point) { .x = 2, .y = 3 });
+					if (board_move_valid(&b, selectedPiece, newSelection))
+					{
+						board_register_move(&b, selectedPiece, newSelection);
+						board_next_turn(&b);
+						selectedPiece = point_invalid();
+						clickedState = false;
+					}
+					else
+					{
+						clickedState = false;
+						selectedPiece = point_invalid();
+					}
 				}
 				else
 				{
-					click_state = false;
-					b.clicked = (Point){ .x = -1, .y = -1 };
+					if (board_select_valid(&b, newSelection))
+					{
+						clickedState = true;
+						selectedPiece = newSelection;
+					}
+					else
+					{
+						clickedState = false;
+						selectedPiece = point_invalid();
+					}
 				}
 			}
 			else
 			{
-				b.clicked = (Point){ .x = -1, .y = -1 };
+				clickedState = false;
+				selectedPiece = (Point){.x = -1, .y = -1};
 			}
 		}
 		BeginDrawing();
@@ -53,7 +73,7 @@ int main() {
 			ClearBackground(BLACK);
 			board_draw();
 			board_state_draw(&b, &pt);
-			board_draw_clicked(&b, &pt);
+			board_draw_clicked(&b, &pt, selectedPiece);
 		}
 		EndDrawing();
 	}

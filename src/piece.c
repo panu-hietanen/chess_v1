@@ -7,40 +7,58 @@
 // BALLARRAY
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool move_valid_pawn(Point from, Point to)
+Point point_invalid()
 {
-	return (from.x == to.x && to.y == 1 + from.y) ? true : false;
+	return (Point) { .x = -1, .y = -1 };
+}
+
+bool move_valid_pawn(Point from, Point to, PieceColour colour)
+{
+	bool firstMove = false;
+	switch (colour) {
+	case PIECE_WHITE:
+		firstMove = from.y == 1 && from.x == to.x && to.y == 2 + from.y;
+		return (firstMove || from.x == to.x && to.y == 1 + from.y);
+	case PIECE_BLACK:
+		firstMove = from.y == 6 && from.x == to.x && to.y == from.y - 2;
+		return (firstMove || from.x == to.x && to.y == from.y - 1);
+	}
+}
+
+bool move_valid_pawn_capture(Point from, Point to, PieceColour colour)
+{
+	switch (colour) {
+	case PIECE_WHITE:
+		return (abs(from.x - to.x) == 1 && to.y - from.y == 1);
+	case PIECE_BLACK:
+		return (abs(from.x - to.x) == 1 && from.y - to.y == 1);
+	}
 }
 
 bool move_valid_rook(Point from, Point to)
 {
-	return (from.x != to.x && from.y != to.y) ? false : true;
+	return (from.x == to.x || from.y == to.y);
 }
 
 bool move_valid_knight(Point from, Point to)
 {
 	return ((abs(from.x - to.x) == 2 && abs(from.y - to.y) == 1 ||
-		abs(from.x - to.x) == 1 && abs(from.y - to.y) == 2)) ? true : false;
+		abs(from.x - to.x) == 1 && abs(from.y - to.y) == 2));
 }
 
 bool move_valid_bishop(Point from, Point to)
 {
-	if ((from.x + from.y) % 2 != (to.x + to.y) % 2) return false;
-	if (((from.y - to.y) * NUM_PIECE_TYPES + abs(from.x - to.x)) % 9 != 0) return false;
-	return true;
+	return (abs(from.x - to.x) == abs(from.y - to.y));
 }
 
 bool move_valid_queen(Point from, Point to)
 {
-	if (move_valid_rook  (from, to) == 0 ||
-		move_valid_pawn  (from, to) == 0 ||
-		move_valid_bishop(from, to) == 0) return true;
-	return false;
+	return move_valid_rook(from, to) || move_valid_bishop(from, to);
 }
 
 bool move_valid_king(Point from, Point to)
 {
-	return (abs(from.x - to.x) > 1 || abs(from.y - to.y) > 1) ? false : true;
+	return abs(from.x - to.x) <= 1 && abs(from.y - to.y) <= 1;
 }
 
 PieceArray piece_array_init(size_t capacity)

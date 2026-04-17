@@ -2,12 +2,11 @@
 #include <math.h>
 
 #include "board.h"
-#include "piece.h"
 #include "utils.h"
 
 Board board_init()
 {
-	Board b = { .clicked = (Point) {.x = -1,.y = -1} , .whiteTurn = true };
+	Board b = (Board){ .turn = PIECE_WHITE };
 	for (int i = 0; i < BOARD_CELLS; ++i)
 	{
 		for (int j = 0; j < BOARD_CELLS; ++j)
@@ -69,6 +68,11 @@ bool board_register_move(Board* b, Point from, Point to)
 	return true;
 }
 
+void board_next_turn(Board* b)
+{
+	b->turn = (b->turn == PIECE_WHITE) ? PIECE_BLACK : PIECE_WHITE;
+}
+
 bool board_move_valid(const Board* b, Point from, Point to)
 {
 	if (from.x == to.x && from.y == to.y) return false;
@@ -83,16 +87,30 @@ bool board_move_valid(const Board* b, Point from, Point to)
 	switch (type)
 	{
 	case PIECE_PAWN:
-		if (!move_valid_pawn(from, to)) return false;
+		if (!move_valid_pawn(from, to, b->turn) && !move_valid_pawn_capture(from, to, b->turn)) return false;
+		if (!move_valid_pawn(from, to, b->turn))
+		{
+			int capturePiece = b->state[to.x][to.y];
+			if (capturePiece < 0) return false;
+			PieceColour captureColour = get_piece_colour(capturePiece);
+			PieceType captureType = get_piece_type(capturePiece);
+			if (captureColour == colour) return false;
+		}
+		else if (!move_valid_pawn_capture(from, to, b->turn))
+		{
+
+		}
 		break;
 	case PIECE_ROOK:
 		if (!move_valid_rook(from, to)) return false;
+		if (board_blocked_rook(b, from, to)) return false;
 		break;
 	case PIECE_KNIGHT:
 		if (!move_valid_knight(from, to)) return false;
 		break;
 	case PIECE_BISHOP:
 		if (!move_valid_bishop(from, to)) return false;
+		if (board_blocked_bishop(b, from, to)) return false;
 		break;
 	case PIECE_QUEEN:
 		if (!move_valid_queen(from, to)) return false;
@@ -102,6 +120,63 @@ bool board_move_valid(const Board* b, Point from, Point to)
 		break;
 	}
 
+	if (!board_can_capture(b, from, to)) return false;
+
+	return true;
+}
+
+bool board_blocked_pawn(const Board* b, Point from, Point to)
+{
+	return false;
+}
+
+bool board_blocked_rook(const Board* b, Point from, Point to)
+{
+	if (from.x == to.x)
+	{
+		int step = (to.y > from.y) ? 1 : -1;
+		for (int y = from.y + step; y != to.y; y += step)
+			if (b->state[from.x][y] >= 0) return true;
+	}
+	else
+	{
+		int step = (to.x > from.x) ? 1 : -1;
+		for (int x = from.x + step; x != to.x; x += step)
+			if (b->state[x][from.y] >= 0) return true;
+	}
+	return false;
+}
+
+bool board_blocked_bishop(const Board* b, Point from, Point to)
+{
+	const bool xgreater = (from.x > to.x) ? true : false;
+	const bool ygreater = (from.y > to.y) ? true : false;
+	while (from.x != to.x)
+	{
+		if (xgreater)
+			from.x -= 1;
+		else
+			from.x += 1;
+
+		if (ygreater)
+			from.y -= 1;
+		else
+			from.y += 1;
+		if (b->state[from.x][from.y] >= 0) return true;
+	}
+	return false;
+}
+
+bool board_blocked_queen(const Board* b, Point from, Point to)
+{
+	return board_blocked_bishop(b, from, to) || board_blocked_rook(b, from, to);
+}
+
+bool board_can_capture(const Board* b, Point from, Point to)
+{
+	int capturePiece = b->state[to.x][to.y];
+	if (capturePiece < 0) return true;
+	if (get_piece_colour(capturePiece) == b->turn) return false;
 	return true;
 }
 
@@ -128,13 +203,19 @@ Point board_mouse_coords(float x, float y)
 	return (Point) { .x = i, .y = j };
 }
 
-bool board_click_valid(const Board* b)
+bool board_select_valid(const Board* b, Point clicked)
 {
-	int x = b->clicked.x;
-	int y = b->clicked.y;
+	int x = clicked.x;
+	int y = clicked.y;
 
 	if (x < 0 || y < 0) return false;
 
 	if (b->state[x][y] < 0) return false;
+
+	int piece = b->state[x][y];
+	if (get_piece_colour(piece) != b->turn) return false;
+
 	return true;
 }
+
+

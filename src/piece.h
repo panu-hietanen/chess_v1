@@ -19,7 +19,10 @@ typedef struct {
 	int x, y;
 } Point;
 
-bool move_valid_pawn(Point from, Point to);
+Point point_invalid();
+
+bool move_valid_pawn(Point from, Point to, PieceColour colour);
+bool move_valid_pawn_capture(Point from, Point to, PieceColour colour);
 bool move_valid_rook(Point from, Point to);
 bool move_valid_knight(Point from, Point to);
 bool move_valid_bishop(Point from, Point to);

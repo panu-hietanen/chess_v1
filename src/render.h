@@ -4,6 +4,7 @@
 #include "raylib.h"
 
 #include "piece.h"
+#include "board.h"
 
 typedef struct {
 	Texture2D data[2][6];
@@ -12,6 +13,7 @@ typedef struct {
 void create_texture(Texture2D* t, const Piece* p);
 
 void board_draw();
+void board_state_draw(const Board* b, const PieceTextures* pt);
 
 void piece_textures_load  (PieceTextures* pt);
 void piece_textures_unload(PieceTextures* pt);

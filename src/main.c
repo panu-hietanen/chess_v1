@@ -28,8 +28,9 @@ int main() {
 		{
 			ClearBackground(BLACK);
 			board_draw();
-			piece_array_draw(&whiteArr, &pt);
-			piece_array_draw(&blackArr, &pt);
+			board_state_draw(&b, &pt);
+			//piece_array_draw(&whiteArr, &pt);
+			//piece_array_draw(&blackArr, &pt);
 		}
 		EndDrawing();
 	}

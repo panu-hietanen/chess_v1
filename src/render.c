@@ -18,9 +18,9 @@ void create_texture(Texture2D* t, const Piece* p)
 
 void board_draw()
 {
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < BOARD_CELLS; ++i)
 	{
-		for (int j = 0; j < 8; ++j)
+		for (int j = 0; j < BOARD_CELLS; ++j)
 		{
 			Color c = ((i + j) % 2 == 0) ? BOARD_COLOUR_LIGHT : BOARD_COLOUR_DARK;
 			DrawRectangle(
@@ -29,6 +29,25 @@ void board_draw()
 				CELL_SIZE, CELL_SIZE,
 				c
 			);
+		}
+	}
+}
+
+void board_state_draw(const Board* b, const PieceTextures* pt)
+{
+	for (int i = 0; i < BOARD_CELLS; ++i)
+	{
+		for (int j = 0; j < BOARD_CELLS; ++j)
+		{
+			const int piece = b->state[i][j];
+			if (piece < 0) continue;
+
+			const int colour = (piece < NUM_PIECE_TYPES) ? PIECE_WHITE : PIECE_BLACK;
+			const int type = piece % NUM_PIECE_TYPES;
+
+			const int sx = BOARD_OFFSET_X + i * CELL_SIZE;
+			const int sy = BOARD_OFFSET_Y + j * CELL_SIZE;
+			DrawTexture(pt->data[colour][type], sx, sy, WHITE);
 		}
 	}
 }

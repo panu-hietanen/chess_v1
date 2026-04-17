@@ -4,15 +4,13 @@
 Board board_init()
 {
 	Board b;
-
-	for (int i = 0; i < NUM_PIECE_TYPES; ++i)
+	for (int i = 0; i < BOARD_CELLS; ++i)
 	{
-		for (int j = 0; j < NUM_PIECE_TYPES; ++j)
+		for (int j = 0; j < BOARD_CELLS; ++j)
 		{
 			b.state[i][j] = -1;
 		}
 	}
-
 	return b;
 }
 

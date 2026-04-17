@@ -7,7 +7,7 @@
 
 Board board_init()
 {
-	Board b;
+	Board b = { .clicked = (Point) {.x = -1,.y = -1} , .whiteTurn = true };
 	for (int i = 0; i < BOARD_CELLS; ++i)
 	{
 		for (int j = 0; j < BOARD_CELLS; ++j)
@@ -128,10 +128,10 @@ Point board_mouse_coords(float x, float y)
 	return (Point) { .x = i, .y = j };
 }
 
-bool board_click_valid(const Board* b, const Point clicked)
+bool board_click_valid(const Board* b)
 {
-	int x = clicked.x;
-	int y = clicked.y;
+	int x = b->clicked.x;
+	int y = b->clicked.y;
 
 	if (x < 0 || y < 0) return false;
 

@@ -58,18 +58,18 @@ void board_state_draw(const Board* b, const PieceTextures* pt)
 	}
 }
 
-void board_draw_clicked(const Board* b, const PieceTextures* pt, const Point clicked)
+void board_draw_clicked(const Board* b, const PieceTextures* pt)
 {
-	if (!board_click_valid(b, clicked)) return;
-	int x = clicked.x;
-	int y = clicked.y;
+	if (!board_click_valid(b)) return;
+	int x = b->clicked.x;
+	int y = b->clicked.y;
 	DrawRectangle(
-		BOARD_OFFSET_X + clicked.x * CELL_SIZE,
-		SCREEN_H - BOARD_OFFSET_Y - (clicked.y + 1) * CELL_SIZE,
+		BOARD_OFFSET_X + x * CELL_SIZE,
+		SCREEN_H - BOARD_OFFSET_Y - (y + 1) * CELL_SIZE,
 		CELL_SIZE, CELL_SIZE,
 		MAROON
 	);
-	board_draw_piece(b, pt, clicked);
+	board_draw_piece(b, pt, b->clicked);
 }
 
 void piece_textures_load(PieceTextures* pt)

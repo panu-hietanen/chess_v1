@@ -8,6 +8,8 @@
 
 typedef struct {
 	int state[BOARD_CELLS][BOARD_CELLS];
+	Point clicked;
+	bool whiteTurn;
 } Board;
 
 Board board_init();
@@ -20,6 +22,6 @@ bool board_move_valid(const Board* b, Point from, Point to);
 
 bool board_mouse_over(float x, float y);
 Point board_mouse_coords(float x, float y);
-bool board_click_valid(const Board* b, const Point clicked);
+bool board_click_valid(const Board* b);
 
 #endif //BOARD_H__

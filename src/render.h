@@ -15,7 +15,7 @@ void create_texture(Texture2D* t, const Piece* p);
 void board_draw();
 void board_draw_piece(const Board* b, const PieceTextures* pt, const Point p);
 void board_state_draw(const Board* b, const PieceTextures* pt);
-void board_draw_clicked(const Board* b, const PieceTextures* pt, const Point clicked);
+void board_draw_clicked(const Board* b, const PieceTextures* pt);
 
 void piece_textures_load  (PieceTextures* pt);
 void piece_textures_unload(PieceTextures* pt);

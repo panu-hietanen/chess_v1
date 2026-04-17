@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "config.h"
 #include "utils.h"
@@ -18,7 +19,7 @@ int main() {
 	piece_textures_load(&pt);
 
 	Board b = board_init_game();
-	Point clicked = { .x = -1, .y = -1 };
+	bool click_state = false;
 
 	SetTargetFPS(60);
 	while (!WindowShouldClose())
@@ -30,20 +31,21 @@ int main() {
 			float y = mouse_coords.y;
 			if (board_mouse_over(x, y))
 			{
-				clicked = board_mouse_coords(x, y);
-				if (board_click_valid(&b, clicked)) 
+				b.clicked = board_mouse_coords(x, y);
+				if (board_click_valid(&b)) 
 				{
-
+					click_state = true;
 					//board_register_move(&b, clicked, (Point) { .x = 2, .y = 3 });
 				}
 				else
 				{
-					clicked = (Point){ .x = -1, .y = -1 };
+					click_state = false;
+					b.clicked = (Point){ .x = -1, .y = -1 };
 				}
 			}
 			else
 			{
-				clicked = (Point){ .x = -1, .y = -1 };
+				b.clicked = (Point){ .x = -1, .y = -1 };
 			}
 		}
 		BeginDrawing();
@@ -51,7 +53,7 @@ int main() {
 			ClearBackground(BLACK);
 			board_draw();
 			board_state_draw(&b, &pt);
-			board_draw_clicked(&b, &pt, clicked);
+			board_draw_clicked(&b, &pt);
 		}
 		EndDrawing();
 	}

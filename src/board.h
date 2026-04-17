@@ -9,6 +9,7 @@ typedef struct {
 } Board;
 
 Board board_init();
+Board board_init_game();
 void board_register_pieces(const Board* b, const PieceArray* arr);
 
 int board_register_move(Board* b, Point from, Point to);

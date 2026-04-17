@@ -7,23 +7,51 @@
 #include "render.h"
 #include "board.h"
 
+Point vec2point(Vector2 v)
+{
+	return (Point) { .x = v.x, .y = v.y };
+}
+
 int main() {
+	InitWindow(SCREEN_W, SCREEN_H, "Chess in C");
 	PieceTextures pt;
 	piece_textures_load(&pt);
 
 	Board b = board_init_game();
+	Point clicked = { .x = -1, .y = -1 };
 
-	InitWindow(SCREEN_W, SCREEN_H, "Chess in C");
 	SetTargetFPS(60);
 	while (!WindowShouldClose())
 	{
+		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+		{
+			Vector2 mouse_coords = GetMousePosition();
+			float x = mouse_coords.x;
+			float y = mouse_coords.y;
+			if (board_mouse_over(x, y))
+			{
+				clicked = board_mouse_coords(x, y);
+				if (board_click_valid(&b, clicked)) 
+				{
+
+					//board_register_move(&b, clicked, (Point) { .x = 2, .y = 3 });
+				}
+				else
+				{
+					clicked = (Point){ .x = -1, .y = -1 };
+				}
+			}
+			else
+			{
+				clicked = (Point){ .x = -1, .y = -1 };
+			}
+		}
 		BeginDrawing();
 		{
 			ClearBackground(BLACK);
 			board_draw();
 			board_state_draw(&b, &pt);
-			//piece_array_draw(&whiteArr, &pt);
-			//piece_array_draw(&blackArr, &pt);
+			board_draw_clicked(&b, &pt, clicked);
 		}
 		EndDrawing();
 	}

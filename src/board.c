@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <math.h>
 
 #include "board.h"
 #include "piece.h"
@@ -19,14 +20,7 @@ Board board_init()
 
 Board board_init_game()
 {
-	Board b;
-	for (int i = 0; i < BOARD_CELLS; ++i)
-	{
-		for (int j = 2; j < BOARD_CELLS - 2; ++j)
-		{
-			b.state[i][j] = -1;
-		}
-	}
+	Board b = board_init();
 
 	for (int i = 0; i < BOARD_CELLS; ++i)
 	{
@@ -65,23 +59,23 @@ void board_register_pieces(Board* b, const PieceArray* arr)
 	}
 }
 
-int board_register_move(Board* b, Point from, Point to)
+bool board_register_move(Board* b, Point from, Point to)
 {
 	int piece = b->state[from.x][from.y];
-	if (piece < 0) return 1;
+	if (piece < 0) return false;
 
 	b->state[from.x][from.y] = -1;
 	b->state[to.x][to.y] = piece;
-	return 0;
+	return true;
 }
 
-int board_move_valid(const Board* b, Point from, Point to)
+bool board_move_valid(const Board* b, Point from, Point to)
 {
-	if (from.x == to.x && from.y == to.y) return 1;
+	if (from.x == to.x && from.y == to.y) return false;
 
 	int piece = b->state[from.x][from.y];
-	if (piece < 0) return 1;
-	if (b->state[from.x][from.y] < 0) return 1; // Piece capture logic
+	if (piece < 0) return false;
+	if (b->state[from.x][from.y] < 0) return false; // Piece capture logic
 
 	PieceColour colour = get_piece_colour(piece);
 	PieceType type = get_piece_type(piece);
@@ -89,24 +83,58 @@ int board_move_valid(const Board* b, Point from, Point to)
 	switch (type)
 	{
 	case PIECE_PAWN:
-		if (!move_valid_pawn(from, to)) return 1;
+		if (!move_valid_pawn(from, to)) return false;
 		break;
 	case PIECE_ROOK:
-		if (!move_valid_rook(from, to)) return 1;
+		if (!move_valid_rook(from, to)) return false;
 		break;
 	case PIECE_KNIGHT:
-		if (!move_valid_knight(from, to)) return 1;
+		if (!move_valid_knight(from, to)) return false;
 		break;
 	case PIECE_BISHOP:
-		if (!move_valid_bishop(from, to)) return 1;
+		if (!move_valid_bishop(from, to)) return false;
 		break;
 	case PIECE_QUEEN:
-		if (!move_valid_queen(from, to)) return 1;
+		if (!move_valid_queen(from, to)) return false;
 		break;
 	case PIECE_KING:
-		if (!move_valid_king(from, to)) return 1;
+		if (!move_valid_king(from, to)) return false;
 		break;
 	}
 
-	return 0;
+	return true;
+}
+
+bool board_mouse_over(float x, float y)
+{
+	if (x > BOARD_OFFSET_X && x < BOARD_OFFSET_X + BOARD_PX &&
+		y > BOARD_OFFSET_Y && y < BOARD_OFFSET_Y + BOARD_PX) 
+	{
+		return true;
+	}
+	return false;
+}
+
+Point board_mouse_coords(float x, float y)
+{
+	int i, j;
+
+	float xdiff = x - BOARD_OFFSET_X;
+	float ydiff = SCREEN_H - BOARD_OFFSET_Y - y;
+
+	i = (int)xdiff / (int)CELL_SIZE;
+	j = (int)ydiff / (int)CELL_SIZE;
+
+	return (Point) { .x = i, .y = j };
+}
+
+bool board_click_valid(const Board* b, const Point clicked)
+{
+	int x = clicked.x;
+	int y = clicked.y;
+
+	if (x < 0 || y < 0) return false;
+
+	if (b->state[x][y] < 0) return false;
+	return true;
 }

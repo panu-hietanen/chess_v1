@@ -7,40 +7,40 @@
 // BALLARRAY
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-int move_valid_pawn(Point from, Point to)
+bool move_valid_pawn(Point from, Point to)
 {
-	return (abs(from.x - to.x) > 1 || abs(from.y - to.y) > 1) ? 1 : 0;
+	return (from.x == to.x && to.y == 1 + from.y) ? true : false;
 }
 
-int move_valid_rook(Point from, Point to)
+bool move_valid_rook(Point from, Point to)
 {
-	return (from.x != to.x && from.y != to.y) ? 1 : 0;
+	return (from.x != to.x && from.y != to.y) ? false : true;
 }
 
-int move_valid_knight(Point from, Point to)
+bool move_valid_knight(Point from, Point to)
 {
 	return ((abs(from.x - to.x) == 2 && abs(from.y - to.y) == 1 ||
-		abs(from.x - to.x) == 1 && abs(from.y - to.y) == 2)) ? 0 : 1;
+		abs(from.x - to.x) == 1 && abs(from.y - to.y) == 2)) ? true : false;
 }
 
-int move_valid_bishop(Point from, Point to)
+bool move_valid_bishop(Point from, Point to)
 {
-	if ((from.x + from.y) % 2 != (to.x + to.y) % 2) return 1;
-	if (((from.y - to.y) * NUM_PIECE_TYPES + abs(from.x - to.x)) % 9 != 0) return 1;
-	return 0;
+	if ((from.x + from.y) % 2 != (to.x + to.y) % 2) return false;
+	if (((from.y - to.y) * NUM_PIECE_TYPES + abs(from.x - to.x)) % 9 != 0) return false;
+	return true;
 }
 
-int move_valid_queen(Point from, Point to)
+bool move_valid_queen(Point from, Point to)
 {
 	if (move_valid_rook  (from, to) == 0 ||
 		move_valid_pawn  (from, to) == 0 ||
-		move_valid_bishop(from, to) == 0) return 0;
-	return 1;
+		move_valid_bishop(from, to) == 0) return true;
+	return false;
 }
 
-int move_valid_king(Point from, Point to)
+bool move_valid_king(Point from, Point to)
 {
-	return move_valid_pawn(from, to);
+	return (abs(from.x - to.x) > 1 || abs(from.y - to.y) > 1) ? false : true;
 }
 
 PieceArray piece_array_init(size_t capacity)

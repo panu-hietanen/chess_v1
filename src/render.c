@@ -33,23 +33,43 @@ void board_draw()
 	}
 }
 
+void board_draw_piece(const Board* b, const PieceTextures* pt, const Point p)
+{
+	if (p.x < 0 || p.y < 0) return;
+	int piece = b->state[p.x][p.y];
+	if (piece < 0) return;
+
+	const PieceColour colour = get_piece_colour(piece);
+	const PieceType type = get_piece_type(piece);
+
+	const int sx = BOARD_OFFSET_X + p.x * CELL_SIZE;
+	const int sy = BOARD_OFFSET_Y + (BOARD_CELLS - 1 - p.y) * CELL_SIZE;
+	DrawTexture(pt->data[colour][type], sx, sy, WHITE);
+}
+
 void board_state_draw(const Board* b, const PieceTextures* pt)
 {
 	for (int i = 0; i < BOARD_CELLS; ++i)
 	{
 		for (int j = 0; j < BOARD_CELLS; ++j)
 		{
-			const int piece = b->state[i][j];
-			if (piece < 0) continue;
-
-			const PieceColour colour = get_piece_colour(piece);
-			const PieceType type = get_piece_type(piece);
-
-			const int sx = BOARD_OFFSET_X + i * CELL_SIZE;
-			const int sy = BOARD_OFFSET_Y + (BOARD_CELLS - 1 - j) * CELL_SIZE;
-			DrawTexture(pt->data[colour][type], sx, sy, WHITE);
+			board_draw_piece(b, pt, (Point) { .x = i, .y = j });
 		}
 	}
+}
+
+void board_draw_clicked(const Board* b, const PieceTextures* pt, const Point clicked)
+{
+	if (!board_click_valid(b, clicked)) return;
+	int x = clicked.x;
+	int y = clicked.y;
+	DrawRectangle(
+		BOARD_OFFSET_X + clicked.x * CELL_SIZE,
+		SCREEN_H - BOARD_OFFSET_Y - (clicked.y + 1) * CELL_SIZE,
+		CELL_SIZE, CELL_SIZE,
+		MAROON
+	);
+	board_draw_piece(b, pt, clicked);
 }
 
 void piece_textures_load(PieceTextures* pt)

@@ -18,6 +18,13 @@ typedef struct {
 	int x, y;
 } Point;
 
+int move_valid_pawn(Point from, Point to);
+int move_valid_rook(Point from, Point to);
+int move_valid_knight(Point from, Point to);
+int move_valid_bishop(Point from, Point to);
+int move_valid_queen(Point from, Point to);
+int move_valid_king(Point from, Point to);
+
 typedef struct {
 	int x, y;
 	PieceType type;

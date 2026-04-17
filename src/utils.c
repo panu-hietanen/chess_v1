@@ -39,3 +39,13 @@ void get_piece_path(char* name, const Piece* p)
 	}
 	sprintf(name, "%s%s-%s", RESOURCES_PATH, colour, piece);
 }
+
+PieceColour get_piece_colour(int p)
+{
+	return (PieceColour)(p < NUM_PIECE_TYPES ? PIECE_WHITE : PIECE_BLACK);
+}
+
+PieceType get_piece_type(int p)
+{
+	return (PieceType)(p % NUM_PIECE_TYPES);
+}

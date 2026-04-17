@@ -1,5 +1,8 @@
+#include <stdlib.h>
+
 #include "board.h"
 #include "piece.h"
+#include "utils.h"
 
 Board board_init()
 {
@@ -69,5 +72,41 @@ int board_register_move(Board* b, Point from, Point to)
 
 	b->state[from.x][from.y] = -1;
 	b->state[to.x][to.y] = piece;
+	return 0;
+}
+
+int board_move_valid(const Board* b, Point from, Point to)
+{
+	if (from.x == to.x && from.y == to.y) return 1;
+
+	int piece = b->state[from.x][from.y];
+	if (piece < 0) return 1;
+	if (b->state[from.x][from.y] < 0) return 1; // Piece capture logic
+
+	PieceColour colour = get_piece_colour(piece);
+	PieceType type = get_piece_type(piece);
+
+	switch (type)
+	{
+	case PIECE_PAWN:
+		if (!move_valid_pawn(from, to)) return 1;
+		break;
+	case PIECE_ROOK:
+		if (!move_valid_rook(from, to)) return 1;
+		break;
+	case PIECE_KNIGHT:
+		if (!move_valid_knight(from, to)) return 1;
+		break;
+	case PIECE_BISHOP:
+		if (!move_valid_bishop(from, to)) return 1;
+		break;
+	case PIECE_QUEEN:
+		if (!move_valid_queen(from, to)) return 1;
+		break;
+	case PIECE_KING:
+		if (!move_valid_king(from, to)) return 1;
+		break;
+	}
+
 	return 0;
 }

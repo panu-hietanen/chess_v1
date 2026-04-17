@@ -42,11 +42,11 @@ void board_state_draw(const Board* b, const PieceTextures* pt)
 			const int piece = b->state[i][j];
 			if (piece < 0) continue;
 
-			const int colour = (piece < NUM_PIECE_TYPES) ? PIECE_WHITE : PIECE_BLACK;
-			const int type = piece % NUM_PIECE_TYPES;
+			const PieceColour colour = get_piece_colour(piece);
+			const PieceType type = get_piece_type(piece);
 
 			const int sx = BOARD_OFFSET_X + i * CELL_SIZE;
-			const int sy = BOARD_OFFSET_Y + j * CELL_SIZE;
+			const int sy = BOARD_OFFSET_Y + (BOARD_CELLS - 1 - j) * CELL_SIZE;
 			DrawTexture(pt->data[colour][type], sx, sy, WHITE);
 		}
 	}
@@ -83,7 +83,7 @@ void piece_array_draw(const PieceArray* arr, const PieceTextures* pt)
 		if (!p.active) continue;
 
 		int sx = BOARD_OFFSET_X + p.x * CELL_SIZE;
-		int sy = BOARD_OFFSET_Y + p.y * CELL_SIZE;
+		int sy = BOARD_OFFSET_Y + (BOARD_CELLS - p.y) * CELL_SIZE;
 		DrawTexture(pt->data[p.colour][p.type], sx, sy, WHITE);
 	}
 }

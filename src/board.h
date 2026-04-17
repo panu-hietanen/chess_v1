@@ -11,4 +11,6 @@ typedef struct {
 Board board_init();
 void board_register_pieces(const Board* b, const PieceArray* arr);
 
+int board_register_move(Board* b, Point from, Point to);
+
 #endif //BOARD_H__

@@ -22,3 +22,13 @@ void board_register_pieces(Board* b, const PieceArray* arr)
 		b->state[p.x][p.y] = p.type + NUM_PIECE_TYPES * p.colour;
 	}
 }
+
+int board_register_move(Board* b, Point from, Point to)
+{
+	int piece = b->state[from.x][from.y];
+	if (piece < 0) return 1;
+
+	b->state[from.x][from.y] = -1;
+	b->state[to.x][to.y] = piece;
+	return 0;
+}

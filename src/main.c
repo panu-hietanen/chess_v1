@@ -21,6 +21,8 @@ int main() {
 	board_register_pieces(&b, &whiteArr);
 	board_register_pieces(&b, &blackArr);
 
+	//board_register_move(&b, (Point) { .x = 0, .y = 0 }, (Point) { .x = 2, .y = 2 });
+
 	SetTargetFPS(60);
 	while (!WindowShouldClose())
 	{

@@ -16,6 +16,10 @@ typedef enum { PIECE_WHITE, PIECE_BLACK } PieceColour;
 
 typedef struct {
 	int x, y;
+} Point;
+
+typedef struct {
+	int x, y;
 	PieceType type;
 	PieceColour colour;
 	int active;

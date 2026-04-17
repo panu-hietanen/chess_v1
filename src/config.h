@@ -7,8 +7,8 @@
 #define BOARD_COLOUR_LIGHT GetColor(0xb58762ff)
 #define BOARD_COLOUR_DARK GetColor(0xefd9b5ff)
 
-#define PIECE_W 70
-#define PIECE_H 70
+#define PIECE_W 80
+#define PIECE_H 80
 
 #define SCREEN_W 1280
 #define SCREEN_H 720

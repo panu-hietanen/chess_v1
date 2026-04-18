@@ -65,9 +65,17 @@ void board_next_turn(Board* b)
 	b->turn = (b->turn == PIECE_WHITE) ? PIECE_BLACK : PIECE_WHITE;
 }
 
-void board_pawn_promote(Board* b)
+void board_pawn_promote(Board* b, Point from, PieceType type)
 {
-	
+	int x = from.x;
+	int step = (b->turn == PIECE_WHITE) ? 1 : -1;
+	int y = from.y + step;
+
+	PieceColour colour = b->turn;
+
+	int id = get_piece_id(type, colour);
+
+	b->state[x][y] = id;
 }
 
 bool board_move_valid(const Board* b, Point from, Point to)

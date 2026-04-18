@@ -20,7 +20,7 @@ Board board_init_game();
 
 MoveResult board_register_move(Board* b, Point from, Point to);
 void board_next_turn(Board* b);
-void board_pawn_promote(Board* b);
+void board_pawn_promote(Board* b, Point from, PieceType type);
 
 bool board_move_valid(const Board* b, Point from, Point to);
 

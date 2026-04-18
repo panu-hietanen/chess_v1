@@ -28,7 +28,6 @@ int main() {
 	{
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
 		{
-		select: ;
 			Vector2 mouseCoords = GetMousePosition();
 			float x = mouseCoords.x;
 			float y = mouseCoords.y;
@@ -61,9 +60,17 @@ int main() {
 					if (board_move_valid(&b, selectedPiece, newSelection))
 					{
 						MoveResult moveResult = board_register_move(&b, selectedPiece, newSelection);
-						gameState = (moveResult == MOVE_OK) ? STATE_DEFAULT : STATE_PROMOTION_SELECTION;
-						board_next_turn(&b);
-						selectedPiece = point_invalid();
+						switch (moveResult)
+						{
+						case MOVE_OK:
+							board_next_turn(&b);
+							selectedPiece = point_invalid();
+							gameState = STATE_DEFAULT;
+							break;
+						case MOVE_PROMOTE:
+							gameState = STATE_PROMOTION_SELECTION;
+							break;
+						}
 					}
 					else
 					{
@@ -90,13 +97,21 @@ int main() {
 				}
 				break;
 			case STATE_PROMOTION_SELECTION:
+				if (promote_mouse_over(x, y))
+				{
+					PieceType piece = promote_mouse_selection(x, y);
+					board_pawn_promote(&b, selectedPiece, piece);
+					board_next_turn(&b);
+					selectedPiece = point_invalid();
+					gameState = STATE_DEFAULT;
+				}
 				break;
 			}
 		}
 		BeginDrawing();
 		{
 			ClearBackground(BACKGROUND_COLOUR);
-			ui_draw(&b, gameState);
+			ui_draw(&b, &pt_promote, gameState);
 			board_draw();
 			board_state_draw(&b, &pt);
 			board_draw_clicked(&b, &pt, selectedPiece);

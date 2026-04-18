@@ -94,7 +94,7 @@ void board_draw_moves(const Board* b, Point clicked)
 	}
 }
 
-void ui_draw(const Board* b, GameState state)
+void ui_draw(const Board* b, const PieceTextures* pt, GameState state)
 {
 	const double recSide = 80;
 	Color turnColour = (b->turn == PIECE_WHITE) ? WHITE : BLACK;
@@ -107,7 +107,15 @@ void ui_draw(const Board* b, GameState state)
 
 	if (state == STATE_PROMOTION_SELECTION)
 	{
-
+		DrawRectangleLines(PROMOTE_OFFSET_X, PROMOTE_OFFSET_Y, PROMOTE_W, PROMOTE_H, WHITE);
+		int x = PROMOTE_OFFSET_X + 0 * PIECE_W / 2;
+		DrawTexture(pt->data[b->turn][PIECE_QUEEN], x, PROMOTE_OFFSET_Y, WHITE);
+		x = PROMOTE_OFFSET_X + 1 * PIECE_W / 2;
+		DrawTexture(pt->data[b->turn][PIECE_ROOK], x, PROMOTE_OFFSET_Y, WHITE);
+		x = PROMOTE_OFFSET_X + 2 * PIECE_W / 2;
+		DrawTexture(pt->data[b->turn][PIECE_BISHOP], x, PROMOTE_OFFSET_Y, WHITE);
+		x = PROMOTE_OFFSET_X + 3 * PIECE_W / 2;
+		DrawTexture(pt->data[b->turn][PIECE_KNIGHT], x, PROMOTE_OFFSET_Y, WHITE);
 	}
 }
 

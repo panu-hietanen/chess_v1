@@ -107,14 +107,14 @@ void ui_draw(const Board* b, const PieceTextures* pt, GameState state)
 
 	if (state == STATE_PROMOTION_SELECTION)
 	{
-		DrawRectangleLines(PROMOTE_OFFSET_X, PROMOTE_OFFSET_Y, PROMOTE_W, PROMOTE_H, WHITE);
-		int x = PROMOTE_OFFSET_X + 0 * PIECE_W / 2;
+		DrawRectangleLines(PROMOTE_OFFSET_X, PROMOTE_OFFSET_Y, PROMOTE_BOX_W, PROMOTE_H, WHITE);
+		int x = PROMOTE_OFFSET_X + 0 * PROMOTE_W;
 		DrawTexture(pt->data[b->turn][PIECE_QUEEN], x, PROMOTE_OFFSET_Y, WHITE);
-		x = PROMOTE_OFFSET_X + 1 * PIECE_W / 2;
+		x = PROMOTE_OFFSET_X + 1 * PROMOTE_W;
 		DrawTexture(pt->data[b->turn][PIECE_ROOK], x, PROMOTE_OFFSET_Y, WHITE);
-		x = PROMOTE_OFFSET_X + 2 * PIECE_W / 2;
+		x = PROMOTE_OFFSET_X + 2 * PROMOTE_W;
 		DrawTexture(pt->data[b->turn][PIECE_BISHOP], x, PROMOTE_OFFSET_Y, WHITE);
-		x = PROMOTE_OFFSET_X + 3 * PIECE_W / 2;
+		x = PROMOTE_OFFSET_X + 3 * PROMOTE_W;
 		DrawTexture(pt->data[b->turn][PIECE_KNIGHT], x, PROMOTE_OFFSET_Y, WHITE);
 	}
 }

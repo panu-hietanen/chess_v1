@@ -23,9 +23,9 @@
 #define RESTART_OFFSET_X	  ((BOARD_OFFSET_X) / 2 - 100)
 #define RESTART_OFFSET_Y	  (BOARD_OFFSET_Y)
 
-#define PROMOTE_W			  (PIECE_W / 2)
+#define PROMOTE_W			  (3 * PIECE_W / 4)
+#define PROMOTE_H			  (3 * PIECE_H / 4)
 #define PROMOTE_BOX_W		  (PROMOTE_W * 4)
-#define PROMOTE_H			  (PIECE_H / 2)
 #define PROMOTE_OFFSET_X	  (BOARD_OFFSET_X + BOARD_PX + 50)
 #define PROMOTE_OFFSET_Y	  (BOARD_OFFSET_Y)
 

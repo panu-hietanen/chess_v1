@@ -12,7 +12,7 @@ bool restart_mouse_over(float x, float y)
 
 bool promote_mouse_over(float x, float y)
 {
-	if (x > PROMOTE_OFFSET_X && x < PROMOTE_OFFSET_X + PROMOTE_W &&
+	if (x > PROMOTE_OFFSET_X && x < PROMOTE_OFFSET_X + PROMOTE_BOX_W &&
 		y > PROMOTE_OFFSET_Y && y < PROMOTE_OFFSET_Y + PROMOTE_H)
 	{
 		return true;
@@ -24,7 +24,7 @@ PieceType promote_mouse_selection(float x, float y)
 {
 	float xdiff = PROMOTE_OFFSET_X - x;
 
-	int idx = (int)xdiff / (int)(PIECE_W / 2);
+	int idx = (int)xdiff / (int)(PROMOTE_W);
 
 	switch (idx)
 	{

@@ -18,7 +18,7 @@ int main() {
 	piece_textures_load(&pt, PIECE_W, PIECE_H);
 
 	PieceTextures pt_promote;
-	piece_textures_load(&pt_promote, PIECE_W / 2, PIECE_H / 2);
+	piece_textures_load(&pt_promote, PROMOTE_W, PROMOTE_H);
 
 	Board b = board_init_game();
 	Point selectedPiece = point_invalid();

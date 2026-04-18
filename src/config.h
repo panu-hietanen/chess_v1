@@ -18,10 +18,15 @@
 #define BOARD_OFFSET_X		  ((SCREEN_W - BOARD_PX) / 2)
 #define BOARD_OFFSET_Y		  ((SCREEN_H - BOARD_PX) / 2)
 
-#define RESTART_W 200
-#define RESTART_H 80
+#define RESTART_W			  200
+#define RESTART_H			  80
 #define RESTART_OFFSET_X	  ((BOARD_OFFSET_X) / 2 - 100)
 #define RESTART_OFFSET_Y	  (BOARD_OFFSET_Y)
+
+#define PROMOTE_W			  200
+#define PROMOTE_H			  80
+#define PROMOTE_OFFSET_X	  ((BOARD_OFFSET_X) / 2 - 100)
+#define PROMOTE_OFFSET_Y	  (BOARD_OFFSET_Y)
 
 #define RESOURCES_PATH		  "C:/Dev/C/chess_v1/resources/"
 #define MAX_PATH_LENGTH		  48

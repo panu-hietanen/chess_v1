@@ -9,8 +9,6 @@
 #include "board.h"
 #include "ui.h"
 
-typedef enum { STATE_DEFAULT, STATE_PIECE_MOVING, STATE_PROMOTION_SELECTION } GameState;
-
 int main() {
 	InitWindow(SCREEN_W, SCREEN_H, "Chess in C");
 
@@ -53,34 +51,37 @@ int main() {
 				}
 				else if (restart_mouse_over(x, y))
 				{
-					b = board_init_game();
-					selectedPiece = point_invalid();
-					gameState = STATE_DEFAULT;
+					game_restart(&b, &selectedPiece, &gameState);
 				}
 				break;
 			case STATE_PIECE_MOVING:
 				if (board_mouse_over(x, y))
 				{
-					gameState = STATE_DEFAULT;
 					Point newSelection = board_mouse_coords(x, y);
 					if (board_move_valid(&b, selectedPiece, newSelection))
 					{
-						board_register_move(&b, selectedPiece, newSelection);
+						MoveResult moveResult = board_register_move(&b, selectedPiece, newSelection);
+						gameState = (moveResult == MOVE_OK) ? STATE_DEFAULT : STATE_PROMOTION_SELECTION;
 						board_next_turn(&b);
 						selectedPiece = point_invalid();
 					}
 					else
 					{
-						gameState = STATE_DEFAULT;
-						selectedPiece = point_invalid();
-						if (board_select_valid(&b, newSelection)) goto select;
+						if (board_select_valid(&b, newSelection))
+						{
+							gameState = STATE_PIECE_MOVING;
+							selectedPiece = newSelection;
+						}
+						else
+						{
+							gameState = STATE_DEFAULT;
+							selectedPiece = point_invalid();
+						}
 					}
 				}
 				else if (restart_mouse_over(x, y))
 				{
-					b = board_init_game();
-					selectedPiece = point_invalid();
-					gameState = STATE_DEFAULT;
+					game_restart(&b, &selectedPiece, &gameState);
 				}
 				else
 				{
@@ -95,7 +96,7 @@ int main() {
 		BeginDrawing();
 		{
 			ClearBackground(BACKGROUND_COLOUR);
-			ui_draw(&b);
+			ui_draw(&b, gameState);
 			board_draw();
 			board_state_draw(&b, &pt);
 			board_draw_clicked(&b, &pt, selectedPiece);

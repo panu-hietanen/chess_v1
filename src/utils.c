@@ -54,3 +54,10 @@ int get_piece_id(PieceType type, PieceColour colour)
 {
 	return type + colour * NUM_PIECE_TYPES;
 }
+
+void game_restart(Board* b, Point* selected, GameState* state)
+{
+	*b = board_init_game();
+	*selected = point_invalid();
+	*state = STATE_DEFAULT;
+}

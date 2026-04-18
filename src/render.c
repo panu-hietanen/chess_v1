@@ -94,7 +94,7 @@ void board_draw_moves(const Board* b, Point clicked)
 	}
 }
 
-void ui_draw(const Board* b)
+void ui_draw(const Board* b, GameState state)
 {
 	const double recSide = 80;
 	Color turnColour = (b->turn == PIECE_WHITE) ? WHITE : BLACK;
@@ -104,6 +104,11 @@ void ui_draw(const Board* b)
 
 	DrawRectangleLines(RESTART_OFFSET_X, RESTART_OFFSET_Y, 200, 80, WHITE);
 	DrawText("RESTART", RESTART_OFFSET_X + 27, RESTART_OFFSET_Y + 25, 30, BLACK);
+
+	if (state == STATE_PROMOTION_SELECTION)
+	{
+
+	}
 }
 
 void piece_textures_load(PieceTextures* pt, int w, int h)

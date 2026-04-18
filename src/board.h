@@ -6,6 +6,10 @@
 #include "config.h"
 #include "piece.h"
 
+typedef enum { STATE_DEFAULT, STATE_PIECE_MOVING, STATE_PROMOTION_SELECTION } GameState;
+
+typedef enum { MOVE_OK, MOVE_PROMOTE } MoveResult;
+
 typedef struct {
 	int state[BOARD_CELLS][BOARD_CELLS];
 	PieceColour turn;
@@ -14,7 +18,7 @@ typedef struct {
 Board board_init();
 Board board_init_game();
 
-bool board_register_move(Board* b, Point from, Point to);
+MoveResult board_register_move(Board* b, Point from, Point to);
 void board_next_turn(Board* b);
 void board_pawn_promote(Board* b);
 

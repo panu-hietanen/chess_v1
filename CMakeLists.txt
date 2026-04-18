@@ -10,6 +10,7 @@ add_executable(chess_v1
     src/utils.c 
     src/piece.c
     src/render.c
+    src/ui.c
 )
 
 target_include_directories(chess_v1 PRIVATE src)

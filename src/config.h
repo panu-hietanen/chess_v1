@@ -6,6 +6,7 @@
 #define BOARD_PX		      (CELL_SIZE * BOARD_CELLS)
 #define BOARD_COLOUR_LIGHT    GetColor(0xb58762ff)
 #define BOARD_COLOUR_DARK     GetColor(0xefd9b5ff)
+#define BACKGROUND_COLOUR	  BROWN
 
 #define PIECE_W				  80
 #define PIECE_H				  80
@@ -16,6 +17,11 @@
 
 #define BOARD_OFFSET_X		  ((SCREEN_W - BOARD_PX) / 2)
 #define BOARD_OFFSET_Y		  ((SCREEN_H - BOARD_PX) / 2)
+
+#define RESTART_W 200
+#define RESTART_H 80
+#define RESTART_OFFSET_X	  ((BOARD_OFFSET_X) / 2 - 100)
+#define RESTART_OFFSET_Y	  (BOARD_OFFSET_Y)
 
 #define RESOURCES_PATH		  "C:/Dev/C/chess_v1/resources/"
 #define MAX_PATH_LENGTH		  48

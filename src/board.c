@@ -56,12 +56,39 @@ bool board_register_move(Board* b, Point from, Point to)
 
 	b->state[from.x][from.y] = -1;
 	b->state[to.x][to.y] = piece;
+	PieceType type = get_piece_type(piece);
+	if (type == PIECE_PAWN)
+	{
+		PieceColour colour = get_piece_colour(piece);
+		switch (colour)
+		{
+		case PIECE_WHITE:
+			if (to.y == 7)
+			{
+				int id = get_piece_id(PIECE_QUEEN, colour);
+				b->state[to.x][to.y] = id;
+
+			}
+			break;
+		case PIECE_BLACK:
+			if (to.y == 0)
+			{
+				int id = get_piece_id(PIECE_QUEEN, colour);
+				b->state[to.x][to.y] = id;
+			}
+		}
+	}
 	return true;
 }
 
 void board_next_turn(Board* b)
 {
 	b->turn = (b->turn == PIECE_WHITE) ? PIECE_BLACK : PIECE_WHITE;
+}
+
+void board_pawn_promote(Board* b)
+{
+	
 }
 
 bool board_move_valid(const Board* b, Point from, Point to)

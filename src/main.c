@@ -7,6 +7,7 @@
 #include "piece.h"
 #include "render.h"
 #include "board.h"
+#include "ui.h"
 
 int main() {
 	InitWindow(SCREEN_W, SCREEN_H, "Chess in C");
@@ -59,6 +60,12 @@ int main() {
 					}
 				}
 			}
+			else if (restart_mouse_over(x, y))
+			{
+				b = board_init_game();
+				selectedPiece = point_invalid();
+				pieceHasBeenSelected = false;
+			}
 			else
 			{
 				pieceHasBeenSelected = false;
@@ -67,9 +74,8 @@ int main() {
 		}
 		BeginDrawing();
 		{
-			ClearBackground(DARKBROWN);
-			Color turnColour = (b.turn == PIECE_WHITE) ? WHITE : BLACK;
-			DrawRectangle(BOARD_OFFSET_X / 2, SCREEN_H / 2, 50, 50, turnColour);
+			ClearBackground(BACKGROUND_COLOUR);
+			ui_draw(&b);
 			board_draw();
 			board_state_draw(&b, &pt);
 			board_draw_clicked(&b, &pt, selectedPiece);

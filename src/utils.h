@@ -7,5 +7,6 @@
 void get_piece_path(char* name, PieceColour pColour, PieceType pType);
 PieceColour get_piece_colour(int p);
 PieceType get_piece_type(int p);
+int get_piece_id(PieceType type, PieceColour colour);
 
 #endif //UTILS_H__

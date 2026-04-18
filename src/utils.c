@@ -49,3 +49,8 @@ PieceType get_piece_type(int p)
 {
 	return (PieceType)(p % NUM_PIECE_TYPES);
 }
+
+int get_piece_id(PieceType type, PieceColour colour)
+{
+	return type + colour * NUM_PIECE_TYPES;
+}

@@ -94,6 +94,18 @@ void board_draw_moves(const Board* b, Point clicked)
 	}
 }
 
+void ui_draw(const Board* b)
+{
+	const double recSide = 80;
+	Color turnColour = (b->turn == PIECE_WHITE) ? WHITE : BLACK;
+	DrawRectangle((BOARD_OFFSET_X - recSide) / 2, SCREEN_H / 2, recSide, recSide, turnColour);
+	DrawText("Turn:", (BOARD_OFFSET_X - 3 * recSide / 4) / 2, SCREEN_H / 2 - 26, 19, BLACK);
+
+
+	DrawRectangleLines(RESTART_OFFSET_X, RESTART_OFFSET_Y, 200, 80, WHITE);
+	DrawText("RESTART", RESTART_OFFSET_X + 27, RESTART_OFFSET_Y + 25, 30, BLACK);
+}
+
 void piece_textures_load(PieceTextures* pt)
 {
 	for (PieceColour colour = 0; colour < 2; ++colour)

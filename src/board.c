@@ -140,20 +140,17 @@ bool board_blocked_rook(const Board* b, Point from, Point to)
 
 bool board_blocked_bishop(const Board* b, Point from, Point to)
 {
-	const bool xgreater = (from.x > to.x) ? true : false;
-	const bool ygreater = (from.y > to.y) ? true : false;
-	while (from.x != to.x)
-	{
-		if (xgreater)
-			from.x -= 1;
-		else
-			from.x += 1;
+	int xstep = (to.x > from.x) ? 1 : -1;
+	int ystep = (to.y > from.y) ? 1 : -1;
 
-		if (ygreater)
-			from.y -= 1;
-		else
-			from.y += 1;
-		if (b->state[from.x][from.y] >= 0) return true;
+	int x = from.x + xstep;
+	int y = from.y + ystep;
+
+	while (x != to.x)   // stops before reaching destination
+	{
+		if (b->state[x][y] >= 0) return true;
+		x += xstep;
+		y += ystep;
 	}
 	return false;
 }

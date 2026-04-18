@@ -98,7 +98,8 @@ bool board_move_valid(const Board* b, Point from, Point to)
 		break;
 	case PIECE_QUEEN:
 		if (!move_valid_queen(from, to)) return false;
-		if (board_blocked_queen(b, from, to)) return false;
+		if (move_valid_rook(from, to) && board_blocked_rook(b, from, to)) return false;
+		if (move_valid_bishop(from, to) && board_blocked_bishop(b, from, to)) return false;
 		break;
 	case PIECE_KING:
 		if (!move_valid_king(from, to)) return false;
@@ -155,11 +156,6 @@ bool board_blocked_bishop(const Board* b, Point from, Point to)
 		if (b->state[from.x][from.y] >= 0) return true;
 	}
 	return false;
-}
-
-bool board_blocked_queen(const Board* b, Point from, Point to)
-{
-	return board_blocked_bishop(b, from, to) || board_blocked_rook(b, from, to);
 }
 
 bool board_can_capture(const Board* b, Point from, Point to)

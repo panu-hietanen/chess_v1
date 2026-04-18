@@ -82,36 +82,9 @@ void board_draw_moves(const Board* b, Point clicked)
 		for (int j = 0; j < BOARD_CELLS; ++j)
 		{
 			Point to = { .x = i, .y = j };
-			switch (type)
-			{
-			case PIECE_PAWN:
-				bool canMove = move_valid_pawn(clicked, to, b->turn);
-				bool canCapture = move_valid_pawn_capture(clicked, to, b->turn);
 
-				if (!canMove && !canCapture) continue;
-				if (!canCapture && board_blocked_pawn(b, clicked, to)) continue;
-				if (!canMove && b->state[to.x][to.y] < 0) continue;
-				break;
-			case PIECE_ROOK:
-				if (!move_valid_rook(clicked, to)) continue;
-				if (board_blocked_rook(b, clicked, to)) continue;
-				break;
-			case PIECE_KNIGHT:
-				if (!move_valid_knight(clicked, to)) continue;
-				break;
-			case PIECE_BISHOP:
-				if (!move_valid_bishop(clicked, to)) continue;
-				if (board_blocked_bishop(b, clicked, to)) continue;
-				break;
-			case PIECE_QUEEN:
-				if (!move_valid_queen(clicked, to)) continue;
-				if (board_blocked_queen(b, clicked, to)) continue;
-				break;
-			case PIECE_KING:
-				if (!move_valid_king(clicked, to)) continue;
-				break;
-			}
-			if (!board_can_capture(b, clicked, to)) continue;
+			if (!board_move_valid(b, clicked, to)) continue;
+
 			DrawCircle(
 				BOARD_OFFSET_X + i * CELL_SIZE + CELL_SIZE / 2,
 				SCREEN_H - BOARD_OFFSET_Y - j * CELL_SIZE - CELL_SIZE / 2,

@@ -22,7 +22,6 @@ bool board_move_valid(const Board* b, Point from, Point to);
 bool board_blocked_pawn(const Board* b, Point from, Point to);
 bool board_blocked_rook(const Board* b, Point from, Point to);
 bool board_blocked_bishop(const Board* b, Point from, Point to);
-bool board_blocked_queen(const Board* b, Point from, Point to);
 
 bool board_can_capture(const Board* b, Point from, Point to);
 

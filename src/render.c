@@ -4,13 +4,13 @@
 
 #include "piece.h"
 
-void create_texture(Texture2D* t, PieceColour pColour, PieceType pType)
+void create_texture(Texture2D* t, PieceColour pColour, PieceType pType, int w, int h)
 {
 	char name[MAX_PATH_LENGTH];
 	get_piece_path(name, pColour, pType);
 
 	Image im = LoadImage(name);
-	ImageResize(&im, PIECE_W, PIECE_H);
+	ImageResize(&im, w, h);
 	
 	*t = LoadTextureFromImage(im);
 	UnloadImage(im);
@@ -106,13 +106,13 @@ void ui_draw(const Board* b)
 	DrawText("RESTART", RESTART_OFFSET_X + 27, RESTART_OFFSET_Y + 25, 30, BLACK);
 }
 
-void piece_textures_load(PieceTextures* pt)
+void piece_textures_load(PieceTextures* pt, int w, int h)
 {
 	for (PieceColour colour = 0; colour < 2; ++colour)
 	{
 		for (PieceType type = 0; type < 6; ++type)
 		{
-			create_texture(&pt->data[colour][type], colour, type);
+			create_texture(&pt->data[colour][type], colour, type, w, h);
 		}
 	}
 }

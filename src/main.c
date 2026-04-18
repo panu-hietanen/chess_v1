@@ -12,7 +12,10 @@
 int main() {
 	InitWindow(SCREEN_W, SCREEN_H, "Chess in C");
 	PieceTextures pt;
-	piece_textures_load(&pt);
+	piece_textures_load(&pt, PIECE_W, PIECE_H);
+
+	PieceTextures pt_promote;
+	piece_textures_load(&pt_promote, PIECE_W / 2, PIECE_H / 2);
 
 	Board b = board_init_game();
 	Point selectedPiece = point_invalid();
@@ -84,6 +87,7 @@ int main() {
 		EndDrawing();
 	}
 	piece_textures_unload(&pt);
+	piece_textures_unload(&pt_promote);
 
 	CloseWindow();
 	return 0;

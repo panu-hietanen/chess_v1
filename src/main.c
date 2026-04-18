@@ -15,32 +15,32 @@ int main() {
 
 	Board b = board_init_game();
 	Point selectedPiece = point_invalid();
-	bool clickedState = false;
+	bool pieceHasBeenSelected = false;
 
 	SetTargetFPS(60);
 	while (!WindowShouldClose())
 	{
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
 		{
-select:
+		select: ;
 			Vector2 mouseCoords = GetMousePosition();
 			float x = mouseCoords.x;
 			float y = mouseCoords.y;
 			if (board_mouse_over(x, y))
 			{
 				Point newSelection = board_mouse_coords(x, y);
-				if (clickedState)
+				if (pieceHasBeenSelected)
 				{
 					if (board_move_valid(&b, selectedPiece, newSelection))
 					{
 						board_register_move(&b, selectedPiece, newSelection);
 						board_next_turn(&b);
 						selectedPiece = point_invalid();
-						clickedState = false;
+						pieceHasBeenSelected = false;
 					}
 					else
 					{
-						clickedState = false;
+						pieceHasBeenSelected = false;
 						selectedPiece = point_invalid();
 						if (board_select_valid(&b, newSelection)) goto select;
 					}
@@ -49,19 +49,19 @@ select:
 				{
 					if (board_select_valid(&b, newSelection))
 					{
-						clickedState = true;
+						pieceHasBeenSelected = true;
 						selectedPiece = newSelection;
 					}
 					else
 					{
-						clickedState = false;
+						pieceHasBeenSelected = false;
 						selectedPiece = point_invalid();
 					}
 				}
 			}
 			else
 			{
-				clickedState = false;
+				pieceHasBeenSelected = false;
 				selectedPiece = (Point){.x = -1, .y = -1};
 			}
 		}
@@ -73,6 +73,7 @@ select:
 			board_draw();
 			board_state_draw(&b, &pt);
 			board_draw_clicked(&b, &pt, selectedPiece);
+			if (pieceHasBeenSelected) board_draw_moves(&b, selectedPiece);
 		}
 		EndDrawing();
 	}

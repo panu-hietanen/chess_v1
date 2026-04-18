@@ -98,7 +98,7 @@ bool board_move_valid(const Board* b, Point from, Point to)
 		break;
 	case PIECE_QUEEN:
 		if (!move_valid_queen(from, to)) return false;
-		if (board_blocked_bishop(b, from, to)) return false;
+		if (board_blocked_queen(b, from, to)) return false;
 		break;
 	case PIECE_KING:
 		if (!move_valid_king(from, to)) return false;

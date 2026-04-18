@@ -9,8 +9,13 @@
 #include "board.h"
 #include "ui.h"
 
+typedef enum { STATE_DEFAULT, STATE_PIECE_MOVING, STATE_PROMOTION_SELECTION } GameState;
+
 int main() {
 	InitWindow(SCREEN_W, SCREEN_H, "Chess in C");
+
+	GameState gameState = STATE_DEFAULT;
+
 	PieceTextures pt;
 	piece_textures_load(&pt, PIECE_W, PIECE_H);
 
@@ -19,7 +24,6 @@ int main() {
 
 	Board b = board_init_game();
 	Point selectedPiece = point_invalid();
-	bool pieceHasBeenSelected = false;
 
 	SetTargetFPS(60);
 	while (!WindowShouldClose())
@@ -30,49 +34,62 @@ int main() {
 			Vector2 mouseCoords = GetMousePosition();
 			float x = mouseCoords.x;
 			float y = mouseCoords.y;
-			if (board_mouse_over(x, y))
+			switch (gameState)
 			{
-				Point newSelection = board_mouse_coords(x, y);
-				if (pieceHasBeenSelected)
+			case STATE_DEFAULT:
+				if (board_mouse_over(x, y))
 				{
+					Point newSelection = board_mouse_coords(x, y);
+					if (board_select_valid(&b, newSelection))
+					{
+						gameState = STATE_PIECE_MOVING;
+						selectedPiece = newSelection;
+					}
+					else
+					{
+						gameState = STATE_DEFAULT;
+						selectedPiece = point_invalid();
+					}
+				}
+				else if (restart_mouse_over(x, y))
+				{
+					b = board_init_game();
+					selectedPiece = point_invalid();
+					gameState = STATE_DEFAULT;
+				}
+				break;
+			case STATE_PIECE_MOVING:
+				if (board_mouse_over(x, y))
+				{
+					gameState = STATE_DEFAULT;
+					Point newSelection = board_mouse_coords(x, y);
 					if (board_move_valid(&b, selectedPiece, newSelection))
 					{
 						board_register_move(&b, selectedPiece, newSelection);
 						board_next_turn(&b);
 						selectedPiece = point_invalid();
-						pieceHasBeenSelected = false;
 					}
 					else
 					{
-						pieceHasBeenSelected = false;
+						gameState = STATE_DEFAULT;
 						selectedPiece = point_invalid();
 						if (board_select_valid(&b, newSelection)) goto select;
 					}
 				}
+				else if (restart_mouse_over(x, y))
+				{
+					b = board_init_game();
+					selectedPiece = point_invalid();
+					gameState = STATE_DEFAULT;
+				}
 				else
 				{
-					if (board_select_valid(&b, newSelection))
-					{
-						pieceHasBeenSelected = true;
-						selectedPiece = newSelection;
-					}
-					else
-					{
-						pieceHasBeenSelected = false;
-						selectedPiece = point_invalid();
-					}
+					gameState = STATE_DEFAULT;
+					selectedPiece = point_invalid();
 				}
-			}
-			else if (restart_mouse_over(x, y))
-			{
-				b = board_init_game();
-				selectedPiece = point_invalid();
-				pieceHasBeenSelected = false;
-			}
-			else
-			{
-				pieceHasBeenSelected = false;
-				selectedPiece = (Point){.x = -1, .y = -1};
+				break;
+			case STATE_PROMOTION_SELECTION:
+				break;
 			}
 		}
 		BeginDrawing();
@@ -82,7 +99,7 @@ int main() {
 			board_draw();
 			board_state_draw(&b, &pt);
 			board_draw_clicked(&b, &pt, selectedPiece);
-			if (pieceHasBeenSelected) board_draw_moves(&b, selectedPiece);
+			if (gameState == STATE_PIECE_MOVING) board_draw_moves(&b, selectedPiece);
 		}
 		EndDrawing();
 	}

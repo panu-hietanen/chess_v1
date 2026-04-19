@@ -54,6 +54,11 @@ MoveResult board_register_move(Board* b, Point from, Point to)
 	int piece = b->state[from.x][from.y];
 	b->state[from.x][from.y] = -1;
 	b->state[to.x][to.y] = piece;
+	PieceColour colourToCheck = (b->turn == PIECE_WHITE) ? PIECE_BLACK : PIECE_WHITE;
+
+	if (board_in_check(b, colourToCheck))
+		return (colourToCheck == PIECE_WHITE) ? MOVE_WHITE_IN_CHECK : MOVE_BLACK_IN_CHECK;
+
 	PieceType type = get_piece_type(piece);
 	if (type == PIECE_PAWN && (to.y == 00 || to.y == 7))
 		return MOVE_PROMOTE;
@@ -122,7 +127,105 @@ bool board_move_valid(const Board* b, Point from, Point to)
 
 	if (!board_can_capture(b, from, to)) return false;
 
+	if (get_piece_type(b->state[to.x][to.y]) != PIECE_KING)
+	{
+		Board b_copy = *b;
+		board_next_turn(&b_copy);
+		board_register_move(&b_copy, from, to);
+		if (board_in_check(&b_copy, b->turn)) return false;
+	}
+
 	return true;
+}
+
+bool board_in_check(const Board* b, PieceColour colourToCheck)
+{
+	int kingx = -1;
+	int kingy = -1;
+	int searchStartIdx, searchStep;
+	if (colourToCheck == PIECE_WHITE)
+	{
+		for (int j = 0; j < BOARD_CELLS; ++j)
+		{
+			for (int i = 0; i < BOARD_CELLS; ++i)
+			{
+				int piece = b->state[i][j];
+				PieceColour c = get_piece_colour(piece);
+				PieceType t = get_piece_type(piece);
+
+				if (t == PIECE_KING && c == colourToCheck)
+				{
+					kingx = i;
+					kingy = j;
+				}
+			}
+		}
+	}
+	else
+	{
+		for (int j = 7; j >= 0; --j)
+		{
+			for (int i = 0; i < BOARD_CELLS; ++i)
+			{
+				int piece = b->state[i][j];
+				PieceColour c = get_piece_colour(piece);
+				PieceType t = get_piece_type(piece);
+
+				if (t == PIECE_KING && c == colourToCheck)
+				{
+					kingx = i;
+					kingy = j;
+					goto foundKing;
+				}
+			}
+		}
+	}
+foundKing:
+	if (kingx < 0 || kingy < 0) return false;
+
+	Point to = { .x = kingx, .y = kingy };
+
+	for (int i = 0; i < BOARD_CELLS; ++i)
+	{
+		for (int j = 0; j < BOARD_CELLS; ++j)
+		{
+			int piece = b->state[i][j];
+			if (piece < 0) continue;
+			PieceColour c = get_piece_colour(piece);
+			PieceType t = get_piece_type(piece);
+			if (c == colourToCheck) continue;
+
+			Point from = { .x = i, .y = j};
+			if (board_move_valid(b, from, to)) return true;
+		}
+	}
+
+	return false;
+}
+
+bool board_is_mate(const Board* b, PieceColour colourToCheck)
+{
+	for (int i = 0; i < BOARD_CELLS; ++i)
+	{
+		for (int j = 0; j < BOARD_CELLS; ++j)
+		{
+			int piece = b->state[i][j];
+			if (piece < 0) continue;
+			PieceColour c = get_piece_colour(piece);
+			PieceType t = get_piece_type(piece);
+			if (c != colourToCheck) continue;
+			for (int ii = 0; i < BOARD_CELLS; ++i)
+			{
+				for (int jj = 0; j < BOARD_CELLS; ++j)
+				{
+					Point from = { .x = i, .y = j };
+					Point to = { .x = ii, .y = jj };
+					if (board_move_valid(b, from, to)) return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 
 bool board_blocked_pawn(const Board* b, Point from, Point to)

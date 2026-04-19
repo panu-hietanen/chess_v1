@@ -67,6 +67,18 @@ int main() {
 							selectedPiece = point_invalid();
 							gameState = STATE_DEFAULT;
 							break;
+						case MOVE_WHITE_IN_CHECK:
+							//board_is_mate(&b, PIECE_WHITE);
+							board_next_turn(&b);
+							selectedPiece = point_invalid();
+							gameState = STATE_DEFAULT;
+							break;
+						case MOVE_BLACK_IN_CHECK:
+							//board_is_mate(&b, PIECE_BLACK);
+							board_next_turn(&b);
+							selectedPiece = point_invalid();
+							gameState = STATE_DEFAULT;
+							break;
 						case MOVE_PROMOTE:
 							gameState = STATE_PROMOTION_SELECTION;
 							break;

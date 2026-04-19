@@ -58,6 +58,7 @@ Board board_init_game()
 MoveResult board_register_move(Board* b, Point from, Point to)
 {
 	int piece = b->state[from.x][from.y];
+	int capturedPiece = b->state[to.x][to.y];
 
 	if (board_is_en_passant(b, from, to)) b->state[b->enPassantPawn.x][b->enPassantPawn.y] = -1;
 	b->state[from.x][from.y] = -1;
@@ -96,6 +97,19 @@ MoveResult board_register_move(Board* b, Point from, Point to)
 	{
 		if (from.x == 0 && board_can_castle(b, PIECE_QUEEN)) board_invalidate_castle(b, PIECE_QUEEN);
 		if (from.x == 7 && board_can_castle(b, PIECE_KING)) board_invalidate_castle(b, PIECE_KING);
+	}
+	if (capturedPiece == PIECE_ROOK)
+	{
+		board_next_turn(b);
+		if (to.x == 0 && board_can_castle(b, PIECE_QUEEN))
+		{
+			board_invalidate_castle(b, PIECE_QUEEN);
+		}
+		if (to.x == 7 && board_can_castle(b, PIECE_KING))
+		{
+			board_invalidate_castle(b, PIECE_KING);
+		}
+		board_next_turn(b);
 	}
 	Point king = board_find_king(b, colourToCheck);
 	if (board_in_check(b, king))
@@ -238,19 +252,22 @@ bool board_castle_move_ok(const Board* b, Point from, Point to)
 	if (to.x != 2 && to.x != 6) return false;
 	if (from.x != 4) return false;
 	if (from.y != to.y) return false;
+	if (to.x == 2 && b->state[1][from.y] >= 0) return false;
 
 	if (to.x == 2 && !board_can_castle(b, PIECE_QUEEN)) return false;
 	if (to.x == 6 && !board_can_castle(b, PIECE_KING)) return false;
 	
+	if (board_in_check(b, from)) return false;
+
 	int step = (to.x > from.x) ? 1 : -1;
-	for (int x = from.x + step; x != to.x; x += step)
+	for (int x = from.x + step; x <= to.x; x += step)
 	{
 		if (b->state[x][from.y] >= 0) return false;
 		PieceColour colourToCheck = get_piece_colour(b->state[from.x][from.y]);
 		Board b_copy = *b;
 		b_copy.turn = colourToCheck;
-		Point to = { .x = x, .y = from.y };
-		board_register_move(&b_copy, from, to);
+		Point newPos = { .x = x, .y = from.y };
+		board_register_move(&b_copy, from, newPos);
 		if (board_in_check(&b_copy, to)) return false;
 	}
 	return true;

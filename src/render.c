@@ -139,7 +139,7 @@ void ui_draw(const Board* b, const PieceTextures* pt, GameState state)
 			? "White won by checkmate!"
 			: "Black won by checkmate!";
 		int textWidth = MeasureText(winText, 50);
-		DrawText(winText, WON_OFFSET_X + (WON_W - textWidth)/ 2, WON_OFFSET_Y, 50, BLACK);
+		DrawText(winText, WON_OFFSET_X + (WON_W - textWidth)/ 2, WON_OFFSET_Y + 50, 50, BLACK);
 		restartx = (SCREEN_W - RESTART_W) / 2;
 		restarty = SCREEN_H / 2 + 100;
 		restartColour = BLACK;

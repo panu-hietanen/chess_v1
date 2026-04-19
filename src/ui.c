@@ -29,7 +29,7 @@ bool promote_mouse_over(float x, float y)
 
 PieceType promote_mouse_selection(float x, float y)
 {
-	float xdiff = PROMOTE_OFFSET_X - x;
+	float xdiff = x - PROMOTE_OFFSET_X;
 
 	int idx = (int)xdiff / (int)(PROMOTE_W);
 

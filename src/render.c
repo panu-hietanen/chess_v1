@@ -76,7 +76,6 @@ void board_draw_moves(const Board* b, Point clicked)
 {
 	int piece = b->state[clicked.x][clicked.y];
 
-	PieceType type = get_piece_type(piece);
 	for (int i = 0; i < BOARD_CELLS; ++i)
 	{
 		for (int j = 0; j < BOARD_CELLS; ++j)
@@ -125,7 +124,7 @@ void ui_draw(const Board* b, const PieceTextures* pt, GameState state)
 			? "White won by checkmate!"
 			: "Black won by checkmate!";
 		int textWidth = MeasureText(winText, 50);
-		DrawText(winText, WON_OFFSET_X + (WON_W - textWidth)/ 2, WON_OFFSET_X, 50, BLACK);
+		DrawText(winText, WON_OFFSET_X + (WON_W - textWidth)/ 2, WON_OFFSET_Y, 50, BLACK);
 		restartx = (SCREEN_W - RESTART_W) / 2;
 		restarty = SCREEN_H / 2 + 100;
 		restartColour = BLACK;

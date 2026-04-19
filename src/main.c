@@ -93,6 +93,7 @@ int main() {
 							break;
 						case MOVE_PROMOTE:
 							gameState = STATE_PROMOTION_SELECTION;
+							selectedPiece = newSelection;
 							break;
 						}
 					}

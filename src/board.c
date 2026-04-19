@@ -56,12 +56,11 @@ MoveResult board_register_move(Board* b, Point from, Point to)
 	b->state[to.x][to.y] = piece;
 	PieceColour colourToCheck = (b->turn == PIECE_WHITE) ? PIECE_BLACK : PIECE_WHITE;
 
+	if (get_piece_type(piece) == PIECE_PAWN && (to.y == 0 || to.y == 7))
+		return MOVE_PROMOTE;
 	if (board_in_check(b, colourToCheck))
 		return (colourToCheck == PIECE_WHITE) ? MOVE_WHITE_IN_CHECK : MOVE_BLACK_IN_CHECK;
 
-	PieceType type = get_piece_type(piece);
-	if (type == PIECE_PAWN && (to.y == 00 || to.y == 7))
-		return MOVE_PROMOTE;
 	return MOVE_OK;
 }
 
@@ -70,17 +69,9 @@ void board_next_turn(Board* b)
 	b->turn = (b->turn == PIECE_WHITE) ? PIECE_BLACK : PIECE_WHITE;
 }
 
-void board_pawn_promote(Board* b, Point from, PieceType type)
+void board_pawn_promote(Board* b, Point at, PieceType type)
 {
-	int x = from.x;
-	int step = (b->turn == PIECE_WHITE) ? 1 : -1;
-	int y = from.y + step;
-
-	PieceColour colour = b->turn;
-
-	int id = get_piece_id(type, colour);
-
-	b->state[x][y] = id;
+	b->state[at.x][at.y] = get_piece_id(type, b->turn);
 }
 
 bool board_move_valid(const Board* b, Point from, Point to)
@@ -89,7 +80,6 @@ bool board_move_valid(const Board* b, Point from, Point to)
 
 	int piece = b->state[from.x][from.y];
 	if (piece < 0) return false;
-	if (b->state[from.x][from.y] < 0) return false; // Piece capture logic
 
 	PieceColour colour = get_piece_colour(piece);
 	PieceType type = get_piece_type(piece);
@@ -157,6 +147,7 @@ bool board_in_check(const Board* b, PieceColour colourToCheck)
 				{
 					kingx = i;
 					kingy = j;
+					goto foundKing;
 				}
 			}
 		}
@@ -239,11 +230,15 @@ bool board_blocked_pawn(const Board* b, Point from, Point to)
 	bool firstMove = false;
 	switch (b->turn) {
 	case PIECE_WHITE:
-		firstMove = from.y == 1 && b->state[from.x][from.y + 2] >= 0;
-		return (firstMove || b->state[from.x][from.y + 1] >= 0);
+		firstMove = abs(to.y - from.y) == 2 && b->state[from.x][from.y + 2] >= 0;
+		if (b->state[from.x][from.y + 1] >= 0) return true;
+		if (firstMove) return true;
+		return false;
 	case PIECE_BLACK:
-		firstMove = from.y == 6 && b->state[from.x][from.y - 2] >= 0;
-		return (firstMove || b->state[from.x][from.y - 1] >= 0);
+		firstMove = abs(to.y - from.y) == 2 && b->state[from.x][from.y - 2] >= 0;
+		if (b->state[from.x][from.y - 1] >= 0) return true;
+		if (firstMove) return true;
+		return false;
 	}
 }
 

@@ -52,11 +52,10 @@ Board board_init_game()
 MoveResult board_register_move(Board* b, Point from, Point to)
 {
 	int piece = b->state[from.x][from.y];
+
+	if (board_is_en_passant(b, from, to)) b->state[b->enPassantPawn.x][b->enPassantPawn.y] = -1;
 	b->state[from.x][from.y] = -1;
 	b->state[to.x][to.y] = piece;
-
-	if (board_is_en_passant(b, from, to))
-		b->state[b->enPassantPawn.x][b->enPassantPawn.y] = -1;
 
 	b->enPassantPawn = point_invalid();
 	PieceColour colourToCheck = (b->turn == PIECE_WHITE) ? PIECE_BLACK : PIECE_WHITE;
@@ -87,40 +86,21 @@ void board_pawn_promote(Board* b, Point at, PieceType type)
 
 Point board_find_king(const Board* b, PieceColour colour)
 {
-	if (colour == PIECE_WHITE)
+	for (int j = 0; j < BOARD_CELLS; ++j)
 	{
-		for (int j = 0; j < BOARD_CELLS; ++j)
+		for (int i = 0; i < BOARD_CELLS; ++i)
 		{
-			for (int i = 0; i < BOARD_CELLS; ++i)
-			{
-				int piece = b->state[i][j];
-				PieceColour c = get_piece_colour(piece);
-				PieceType t = get_piece_type(piece);
+			int piece = b->state[i][j];
+			PieceColour c = get_piece_colour(piece);
+			PieceType t = get_piece_type(piece);
 
-				if (t == PIECE_KING && c == colour)
-				{
-					return (Point) { .x = i, .y = j };
-				}
+			if (t == PIECE_KING && c == colour)
+			{
+				return (Point) { .x = i, .y = j };
 			}
 		}
 	}
-	else
-	{
-		for (int j = 7; j >= 0; --j)
-		{
-			for (int i = 0; i < BOARD_CELLS; ++i)
-			{
-				int piece = b->state[i][j];
-				PieceColour c = get_piece_colour(piece);
-				PieceType t = get_piece_type(piece);
-
-				if (t == PIECE_KING && c == colour)
-				{
-					return (Point) { .x = i, .y = j };
-				}
-			}
-		}
-	}
+	return point_invalid();
 }
 
 bool board_move_valid(const Board* b, Point from, Point to)
@@ -141,10 +121,7 @@ bool board_move_valid(const Board* b, Point from, Point to)
 
 		if (!canMove && !canCapture) return false;
 		if (!canCapture && board_blocked_pawn(b, from, to)) return false;
-		if (!canMove && b->state[to.x][to.y] < 0)
-		{
-			if (!board_is_en_passant(b, from, to)) return false;
-		}
+		if (!canMove && b->state[to.x][to.y] < 0 && !board_is_en_passant(b, from, to)) return false;
 		break;
 	case PIECE_ROOK:
 		if (!move_valid_rook(from, to)) return false;

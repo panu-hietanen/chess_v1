@@ -27,10 +27,11 @@ Board board_init_game();
 MoveResult board_register_move(Board* b, Point from, Point to);
 void board_next_turn(Board* b);
 void board_pawn_promote(Board* b, Point from, PieceType type);
+Point board_find_king(const Board* b, PieceColour colour);
 
 bool board_move_valid(const Board* b, Point from, Point to);
 
-bool board_in_check(const Board* b, PieceColour colourToCheck);
+bool board_in_check(const Board* b, Point king);
 bool board_is_mate(const Board* b, PieceColour colourToCheck);
 
 bool board_blocked_pawn(const Board* b, Point from, Point to);

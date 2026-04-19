@@ -58,18 +58,33 @@ void board_state_draw(const Board* b, const PieceTextures* pt)
 	}
 }
 
-void board_draw_clicked(const Board* b, const PieceTextures* pt, Point clicked)
+void board_draw_highlight(const Board* b, const PieceTextures* pt, Point clicked)
 {
-	if (!board_select_valid(b, clicked)) return;
-	int x = clicked.x;
-	int y = clicked.y;
-	DrawRectangle(
-		BOARD_OFFSET_X + x * CELL_SIZE,
-		SCREEN_H - BOARD_OFFSET_Y - (y + 1) * CELL_SIZE,
-		CELL_SIZE, CELL_SIZE,
-		MAROON
-	);
-	board_draw_piece(b, pt, clicked);
+	if (board_select_valid(b, clicked))
+	{
+		int x = clicked.x;
+		int y = clicked.y;
+		DrawRectangle(
+			BOARD_OFFSET_X + x * CELL_SIZE,
+			SCREEN_H - BOARD_OFFSET_Y - (y + 1) * CELL_SIZE,
+			CELL_SIZE, CELL_SIZE,
+			MAROON
+		);
+		board_draw_piece(b, pt, clicked);
+	}
+	Point king = board_find_king(b, b->turn);
+	if (board_in_check(b, king))
+	{
+		int x = king.x;
+		int y = king.y;
+		DrawRectangle(
+			BOARD_OFFSET_X + x * CELL_SIZE,
+			SCREEN_H - BOARD_OFFSET_Y - (y + 1) * CELL_SIZE,
+			CELL_SIZE, CELL_SIZE,
+			SKYBLUE
+		);
+		board_draw_piece(b, pt, king);
+	}
 }
 
 void board_draw_moves(const Board* b, Point clicked)

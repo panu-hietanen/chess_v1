@@ -143,7 +143,7 @@ int main() {
 			ClearBackground(BACKGROUND_COLOUR);
 			board_draw();
 			board_state_draw(&b, &pt);
-			board_draw_clicked(&b, &pt, selectedPiece);
+			board_draw_highlight(&b, &pt, selectedPiece);
 			if (gameState == STATE_PIECE_MOVING) board_draw_moves(&b, selectedPiece);
 			ui_draw(&b, &pt_promote, gameState);
 		}

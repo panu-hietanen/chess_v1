@@ -58,7 +58,8 @@ MoveResult board_register_move(Board* b, Point from, Point to)
 
 	if (get_piece_type(piece) == PIECE_PAWN && (to.y == 0 || to.y == 7))
 		return MOVE_PROMOTE;
-	if (board_in_check(b, colourToCheck))
+	Point king = board_find_king(b, colourToCheck);
+	if (board_in_check(b, king))
 		return (colourToCheck == PIECE_WHITE) ? MOVE_WHITE_IN_CHECK : MOVE_BLACK_IN_CHECK;
 
 	return MOVE_OK;
@@ -72,6 +73,44 @@ void board_next_turn(Board* b)
 void board_pawn_promote(Board* b, Point at, PieceType type)
 {
 	b->state[at.x][at.y] = get_piece_id(type, b->turn);
+}
+
+Point board_find_king(const Board* b, PieceColour colour)
+{
+	if (colour == PIECE_WHITE)
+	{
+		for (int j = 0; j < BOARD_CELLS; ++j)
+		{
+			for (int i = 0; i < BOARD_CELLS; ++i)
+			{
+				int piece = b->state[i][j];
+				PieceColour c = get_piece_colour(piece);
+				PieceType t = get_piece_type(piece);
+
+				if (t == PIECE_KING && c == colour)
+				{
+					return (Point) { .x = i, .y = j };
+				}
+			}
+		}
+	}
+	else
+	{
+		for (int j = 7; j >= 0; --j)
+		{
+			for (int i = 0; i < BOARD_CELLS; ++i)
+			{
+				int piece = b->state[i][j];
+				PieceColour c = get_piece_colour(piece);
+				PieceType t = get_piece_type(piece);
+
+				if (t == PIECE_KING && c == colour)
+				{
+					return (Point) { .x = i, .y = j };
+				}
+			}
+		}
+	}
 }
 
 bool board_move_valid(const Board* b, Point from, Point to)
@@ -122,59 +161,23 @@ bool board_move_valid(const Board* b, Point from, Point to)
 		Board b_copy = *b;
 		board_next_turn(&b_copy);
 		board_register_move(&b_copy, from, to);
-		if (board_in_check(&b_copy, b->turn)) return false;
+		Point king = board_find_king(&b_copy, b->turn);
+		if (board_in_check(&b_copy, king)) return false;
 	}
 
 	return true;
 }
 
-bool board_in_check(const Board* b, PieceColour colourToCheck)
+bool board_in_check(const Board* b, Point king)
 {
-	int kingx = -1;
-	int kingy = -1;
-	int searchStartIdx, searchStep;
-	if (colourToCheck == PIECE_WHITE)
-	{
-		for (int j = 0; j < BOARD_CELLS; ++j)
-		{
-			for (int i = 0; i < BOARD_CELLS; ++i)
-			{
-				int piece = b->state[i][j];
-				PieceColour c = get_piece_colour(piece);
-				PieceType t = get_piece_type(piece);
+	int kingx = king.x;
+	int kingy = king.y;
 
-				if (t == PIECE_KING && c == colourToCheck)
-				{
-					kingx = i;
-					kingy = j;
-					goto foundKing;
-				}
-			}
-		}
-	}
-	else
-	{
-		for (int j = 7; j >= 0; --j)
-		{
-			for (int i = 0; i < BOARD_CELLS; ++i)
-			{
-				int piece = b->state[i][j];
-				PieceColour c = get_piece_colour(piece);
-				PieceType t = get_piece_type(piece);
-
-				if (t == PIECE_KING && c == colourToCheck)
-				{
-					kingx = i;
-					kingy = j;
-					goto foundKing;
-				}
-			}
-		}
-	}
-foundKing:
 	if (kingx < 0 || kingy < 0) return false;
-
-	Point to = { .x = kingx, .y = kingy };
+	if (get_piece_type(b->state[kingx][kingy]) != PIECE_KING) return false;
+	PieceColour colourToCheck = get_piece_colour(b->state[kingx][kingy]);
+	Board b_copy = *b;
+	b_copy.turn = (colourToCheck == PIECE_WHITE) ? PIECE_BLACK : PIECE_WHITE;
 
 	for (int i = 0; i < BOARD_CELLS; ++i)
 	{
@@ -184,10 +187,10 @@ foundKing:
 			if (piece < 0) continue;
 			PieceColour c = get_piece_colour(piece);
 			PieceType t = get_piece_type(piece);
-			if (c == colourToCheck) continue;
+			if (get_piece_colour(piece) == colourToCheck) continue;
 
 			Point from = { .x = i, .y = j};
-			if (board_move_valid(b, from, to)) return true;
+			if (board_move_valid(&b_copy, from, king)) return true;
 		}
 	}
 

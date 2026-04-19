@@ -17,9 +17,16 @@ typedef enum {
 typedef enum { MOVE_OK, MOVE_PROMOTE, MOVE_WHITE_IN_CHECK, MOVE_BLACK_IN_CHECK } MoveResult;
 
 typedef struct {
+	bool kingSide;
+	bool queenSide;
+} CastleValid;
+
+typedef struct {
 	int state[BOARD_CELLS][BOARD_CELLS];
 	PieceColour turn;
 	Point enPassantPawn;
+	CastleValid canCastleWhite;
+	CastleValid canCastleBlack;
 } Board;
 
 Board board_init();
@@ -32,6 +39,10 @@ Point board_find_king(const Board* b, PieceColour colour);
 
 bool board_move_valid(const Board* b, Point from, Point to);
 bool board_is_en_passant(const Board* b, Point from, Point to);
+
+bool board_can_castle(const Board* b, PieceType side);
+void board_invalidate_castle(Board* b, PieceType side);
+bool board_castle_move_ok(const Board* b, Point from, Point to);
 
 bool board_in_check(const Board* b, Point king);
 bool board_is_mate(const Board* b, PieceColour colourToCheck);

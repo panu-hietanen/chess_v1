@@ -6,7 +6,13 @@
 
 Board board_init()
 {
-	Board b = (Board){ .turn = PIECE_WHITE, .enPassantPawn = point_invalid()};
+	CastleValid castle = { .kingSide = true,.queenSide = true };
+	Board b = (Board){ 
+		.turn = PIECE_WHITE,
+		.enPassantPawn = point_invalid(),
+		.canCastleWhite = castle,
+		.canCastleBlack = castle
+	};
 	for (int i = 0; i < BOARD_CELLS; ++i)
 	{
 		for (int j = 0; j < BOARD_CELLS; ++j)
@@ -60,12 +66,36 @@ MoveResult board_register_move(Board* b, Point from, Point to)
 	b->enPassantPawn = point_invalid();
 	PieceColour colourToCheck = (b->turn == PIECE_WHITE) ? PIECE_BLACK : PIECE_WHITE;
 
-	if (get_piece_type(piece) == PIECE_PAWN)
+	PieceType type = get_piece_type(piece);
+
+	if (type == PIECE_PAWN)
 	{
 		if (to.y == 0 || to.y == 7)
 			return MOVE_PROMOTE;
 		if (from.y == 1 && to.y == 3) b->enPassantPawn = to;
 		else if (from.y == 6 && to.y == 4) b->enPassantPawn = to;
+	}
+	if (type == PIECE_KING)
+	{
+		if (from.x == 4 && to.x == 2) 
+		{
+			int rookID = b->state[0][from.y];
+			b->state[0][from.y] = -1;
+			b->state[3][from.y] = rookID;
+		}
+		else if (from.x == 4 && to.x == 6) 
+		{
+			int rookID = b->state[7][from.y];
+			b->state[7][from.y] = -1;
+			b->state[5][from.y] = rookID;
+		}
+		board_invalidate_castle(b, PIECE_KING);
+		board_invalidate_castle(b, PIECE_QUEEN);
+	}
+	if (type == PIECE_ROOK)
+	{
+		if (from.x == 0 && board_can_castle(b, PIECE_QUEEN)) board_invalidate_castle(b, PIECE_QUEEN);
+		if (from.x == 7 && board_can_castle(b, PIECE_KING)) board_invalidate_castle(b, PIECE_KING);
 	}
 	Point king = board_find_king(b, colourToCheck);
 	if (board_in_check(b, king))
@@ -140,7 +170,11 @@ bool board_move_valid(const Board* b, Point from, Point to)
 		if (move_valid_bishop(from, to) && board_blocked_bishop(b, from, to)) return false;
 		break;
 	case PIECE_KING:
-		if (!move_valid_king(from, to)) return false;
+		if (!move_valid_king(from, to) && 
+			!board_can_castle(b, PIECE_KING) && 
+			!board_can_castle(b, PIECE_QUEEN)) return false;
+		if (!move_valid_king(from, to) && !board_castle_move_ok(b, from, to)) return false;
+		
 		break;
 	}
 
@@ -164,6 +198,62 @@ bool board_is_en_passant(const Board* b, Point from, Point to)
 	if ((b->enPassantPawn.x >= 0 && b->enPassantPawn.y >= 0) &&
 		(to.x == b->enPassantPawn.x && to.y + step == b->enPassantPawn.y)) return true;
 	return false;
+}
+
+bool board_can_castle(const Board* b, PieceType side)
+{
+	CastleValid castle = (b->turn == PIECE_WHITE) ? b->canCastleWhite : b->canCastleBlack;
+	return (side == PIECE_KING) ? castle.kingSide : castle.queenSide;
+}
+
+void board_invalidate_castle(Board* b, PieceType side)
+{
+	switch (b->turn)
+	{
+	case PIECE_WHITE:
+		if (side == PIECE_KING)
+		{
+			b->canCastleWhite.kingSide = false;
+		}
+		else
+		{
+			b->canCastleWhite.queenSide = false;
+		}
+		break;
+	case PIECE_BLACK:
+		if (side == PIECE_KING)
+		{
+			b->canCastleBlack.kingSide = false;
+		}
+		else
+		{
+			b->canCastleBlack.queenSide = false;
+		}
+		break;
+	}
+}
+
+bool board_castle_move_ok(const Board* b, Point from, Point to)
+{
+	if (to.x != 2 && to.x != 6) return false;
+	if (from.x != 4) return false;
+	if (from.y != to.y) return false;
+
+	if (to.x == 2 && !board_can_castle(b, PIECE_QUEEN)) return false;
+	if (to.x == 6 && !board_can_castle(b, PIECE_KING)) return false;
+	
+	int step = (to.x > from.x) ? 1 : -1;
+	for (int x = from.x + step; x != to.x; x += step)
+	{
+		if (b->state[x][from.y] >= 0) return false;
+		PieceColour colourToCheck = get_piece_colour(b->state[from.x][from.y]);
+		Board b_copy = *b;
+		b_copy.turn = colourToCheck;
+		Point to = { .x = x, .y = from.y };
+		board_register_move(&b_copy, from, to);
+		if (board_in_check(&b_copy, to)) return false;
+	}
+	return true;
 }
 
 bool board_in_check(const Board* b, Point king)

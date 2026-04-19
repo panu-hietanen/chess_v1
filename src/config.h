@@ -18,6 +18,11 @@
 #define BOARD_OFFSET_X		  ((SCREEN_W - BOARD_PX) / 2)
 #define BOARD_OFFSET_Y		  ((SCREEN_H - BOARD_PX) / 2)
 
+#define WON_W				  1000
+#define WON_H				  600
+#define WON_OFFSET_X		  ((SCREEN_W - WON_W) / 2)
+#define WON_OFFSET_Y		  ((SCREEN_H - WON_H) / 2)
+
 #define RESTART_W			  200
 #define RESTART_H			  80
 #define RESTART_OFFSET_X	  ((BOARD_OFFSET_X) / 2 - 100)

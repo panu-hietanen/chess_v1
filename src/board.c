@@ -205,6 +205,8 @@ foundKing:
 
 bool board_is_mate(const Board* b, PieceColour colourToCheck)
 {
+	Board b_copy = *b;
+	b_copy.turn = colourToCheck;
 	for (int i = 0; i < BOARD_CELLS; ++i)
 	{
 		for (int j = 0; j < BOARD_CELLS; ++j)
@@ -214,27 +216,34 @@ bool board_is_mate(const Board* b, PieceColour colourToCheck)
 			PieceColour c = get_piece_colour(piece);
 			PieceType t = get_piece_type(piece);
 			if (c != colourToCheck) continue;
-			for (int ii = 0; i < BOARD_CELLS; ++i)
+			for (int ii = 0; ii < BOARD_CELLS; ++ii)
 			{
-				for (int jj = 0; j < BOARD_CELLS; ++j)
+				for (int jj = 0; jj < BOARD_CELLS; ++jj)
 				{
 					Point from = { .x = i, .y = j };
 					Point to = { .x = ii, .y = jj };
-					if (board_move_valid(b, from, to)) return true;
+					//Board b_copy = *b;
+					if (board_move_valid(&b_copy, from, to)) 
+					{
+						return false;
+					}
 				}
 			}
 		}
 	}
-	return false;
+	return true;
 }
 
 bool board_blocked_pawn(const Board* b, Point from, Point to)
 {
+	bool firstMove = false;
 	switch (b->turn) {
 	case PIECE_WHITE:
-		return b->state[from.x][from.y + 1] >= 0;
+		firstMove = from.y == 1 && b->state[from.x][from.y + 2] >= 0;
+		return (firstMove || b->state[from.x][from.y + 1] >= 0);
 	case PIECE_BLACK:
-		return b->state[from.x][from.y - 1] >= 0;
+		firstMove = from.y == 6 && b->state[from.x][from.y - 2] >= 0;
+		return (firstMove || b->state[from.x][from.y - 1] >= 0);
 	}
 }
 

@@ -5,7 +5,7 @@
 
 #include "board.h"
 
-bool restart_mouse_over(float x, float y);
+bool restart_mouse_over(float x, float y, GameState state);
 
 bool promote_mouse_over(float x, float y);
 PieceType promote_mouse_selection(float x, float y);

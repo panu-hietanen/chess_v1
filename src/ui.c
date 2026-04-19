@@ -1,9 +1,16 @@
 #include "ui.h"
 
-bool restart_mouse_over(float x, float y)
+bool restart_mouse_over(float x, float y, GameState state)
 {
-	if (x > RESTART_OFFSET_X && x < RESTART_OFFSET_X + RESTART_W &&
-		y > RESTART_OFFSET_Y && y < RESTART_OFFSET_Y + RESTART_H)
+	int restartx = RESTART_OFFSET_X;
+	int restarty = RESTART_OFFSET_Y;
+	if (state == STATE_WHITE_WON || state == STATE_BLACK_WON)
+	{
+		restartx = (SCREEN_W - RESTART_W) / 2;
+		restarty = SCREEN_H / 2 + 100;
+	}
+	if (x > restartx && x < restartx + RESTART_W &&
+		y > restarty && y < restarty + RESTART_H)
 	{
 		return true;
 	}

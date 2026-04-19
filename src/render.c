@@ -101,10 +101,6 @@ void ui_draw(const Board* b, const PieceTextures* pt, GameState state)
 	DrawRectangle((BOARD_OFFSET_X - recSide) / 2, SCREEN_H / 2, recSide, recSide, turnColour);
 	DrawText("Turn:", (BOARD_OFFSET_X - 3 * recSide / 4) / 2, SCREEN_H / 2 - 26, 19, BLACK);
 
-
-	DrawRectangleLines(RESTART_OFFSET_X, RESTART_OFFSET_Y, 200, 80, WHITE);
-	DrawText("RESTART", RESTART_OFFSET_X + 27, RESTART_OFFSET_Y + 25, 30, BLACK);
-
 	if (state == STATE_PROMOTION_SELECTION)
 	{
 		DrawRectangleLines(PROMOTE_OFFSET_X, PROMOTE_OFFSET_Y, PROMOTE_BOX_W, PROMOTE_H, WHITE);
@@ -117,6 +113,34 @@ void ui_draw(const Board* b, const PieceTextures* pt, GameState state)
 		x = PROMOTE_OFFSET_X + 3 * PROMOTE_W;
 		DrawTexture(pt->data[b->turn][PIECE_KNIGHT], x, PROMOTE_OFFSET_Y, WHITE);
 	}
+
+	int restartx, restarty;
+	Color restartColour = WHITE;
+	if (state == STATE_WHITE_WON || state == STATE_BLACK_WON)
+	{
+		Rectangle rec = { .x = WON_OFFSET_X, .y = WON_OFFSET_Y, .width = WON_W, .height = WON_H };
+		DrawRectangleRec(rec, WHITE);
+		DrawRectangleLinesEx(rec, 10, BLACK);
+		const char* winText = (state == STATE_WHITE_WON)
+			? "White won by checkmate!"
+			: "Black won by checkmate!";
+		int textWidth = MeasureText(winText, 50);
+		DrawText(winText, WON_OFFSET_X + (WON_W - textWidth)/ 2, WON_OFFSET_X, 50, BLACK);
+		restartx = (SCREEN_W - RESTART_W) / 2;
+		restarty = SCREEN_H / 2 + 100;
+		restartColour = BLACK;
+	}
+	else
+	{
+		restartx = RESTART_OFFSET_X;
+		restarty = RESTART_OFFSET_Y;
+	}
+	const char* msg = "RESTART";
+	Vector2 msgSize = MeasureTextEx(GetFontDefault(), msg, 30, 0);
+	int msgWidth = MeasureText(msg, 30);
+	int msgHeight = msgSize.y;
+	DrawRectangleLines(restartx, restarty, RESTART_W, RESTART_H, restartColour);
+	DrawText(msg, restartx + (RESTART_W - msgWidth) / 2, restarty + (RESTART_H - msgHeight) / 2, 30, BLACK);
 }
 
 void piece_textures_load(PieceTextures* pt, int w, int h)

@@ -48,7 +48,7 @@ int main() {
 						selectedPiece = point_invalid();
 					}
 				}
-				else if (restart_mouse_over(x, y))
+				else if (restart_mouse_over(x, y, gameState))
 				{
 					game_restart(&b, &selectedPiece, &gameState);
 				}
@@ -68,16 +68,28 @@ int main() {
 							gameState = STATE_DEFAULT;
 							break;
 						case MOVE_WHITE_IN_CHECK:
-							//board_is_mate(&b, PIECE_WHITE);
-							board_next_turn(&b);
-							selectedPiece = point_invalid();
-							gameState = STATE_DEFAULT;
+							if (board_is_mate(&b, PIECE_WHITE))
+							{
+								gameState = STATE_BLACK_WON;
+							}
+							else
+							{
+								board_next_turn(&b);
+								selectedPiece = point_invalid();
+								gameState = STATE_DEFAULT;
+							}
 							break;
 						case MOVE_BLACK_IN_CHECK:
-							//board_is_mate(&b, PIECE_BLACK);
-							board_next_turn(&b);
-							selectedPiece = point_invalid();
-							gameState = STATE_DEFAULT;
+							if (board_is_mate(&b, PIECE_BLACK))
+							{
+								gameState = STATE_WHITE_WON;
+							}
+							else
+							{
+								board_next_turn(&b);
+								selectedPiece = point_invalid();
+								gameState = STATE_DEFAULT;
+							}
 							break;
 						case MOVE_PROMOTE:
 							gameState = STATE_PROMOTION_SELECTION;
@@ -98,7 +110,7 @@ int main() {
 						}
 					}
 				}
-				else if (restart_mouse_over(x, y))
+				else if (restart_mouse_over(x, y, gameState))
 				{
 					game_restart(&b, &selectedPiece, &gameState);
 				}
@@ -118,16 +130,21 @@ int main() {
 					gameState = STATE_DEFAULT;
 				}
 				break;
+			case STATE_WHITE_WON:
+			case STATE_BLACK_WON:
+				if (restart_mouse_over(x, y, gameState))
+					game_restart(&b, &selectedPiece, &gameState);
+				break;
 			}
 		}
 		BeginDrawing();
 		{
 			ClearBackground(BACKGROUND_COLOUR);
-			ui_draw(&b, &pt_promote, gameState);
 			board_draw();
 			board_state_draw(&b, &pt);
 			board_draw_clicked(&b, &pt, selectedPiece);
 			if (gameState == STATE_PIECE_MOVING) board_draw_moves(&b, selectedPiece);
+			ui_draw(&b, &pt_promote, gameState);
 		}
 		EndDrawing();
 	}

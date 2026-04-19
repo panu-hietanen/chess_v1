@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "config.h"
 
 bool restart_mouse_over(float x, float y, GameState state)
 {

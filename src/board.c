@@ -68,6 +68,7 @@ MoveResult board_register_move(Board* b, Point from, Point to)
 	PieceColour colourToCheck = (b->turn == PIECE_WHITE) ? PIECE_BLACK : PIECE_WHITE;
 
 	PieceType type = get_piece_type(piece);
+	PieceType capturedType = get_piece_colour(capturedPiece);
 
 	if (type == PIECE_PAWN)
 	{
@@ -98,7 +99,7 @@ MoveResult board_register_move(Board* b, Point from, Point to)
 		if (from.x == 0 && board_can_castle(b, PIECE_QUEEN)) board_invalidate_castle(b, PIECE_QUEEN);
 		if (from.x == 7 && board_can_castle(b, PIECE_KING)) board_invalidate_castle(b, PIECE_KING);
 	}
-	if (capturedPiece == PIECE_ROOK)
+	if (capturedType == PIECE_ROOK)
 	{
 		board_next_turn(b);
 		if (to.x == 0 && board_can_castle(b, PIECE_QUEEN))
@@ -260,7 +261,7 @@ bool board_castle_move_ok(const Board* b, Point from, Point to)
 	if (board_in_check(b, from)) return false;
 
 	int step = (to.x > from.x) ? 1 : -1;
-	for (int x = from.x + step; x <= to.x; x += step)
+	for (int x = from.x + step; step > 0 ? x <= to.x : x >= to.x; x += step)
 	{
 		if (b->state[x][from.y] >= 0) return false;
 		PieceColour colourToCheck = get_piece_colour(b->state[from.x][from.y]);

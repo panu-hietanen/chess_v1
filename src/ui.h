@@ -3,7 +3,16 @@
 
 #include <stdbool.h>
 
-#include "board.h"
+#include "piece.h"
+
+typedef enum {
+	STATE_DEFAULT,
+	STATE_PIECE_MOVING,
+	STATE_PROMOTION_SELECTION,
+	STATE_WHITE_WON,
+	STATE_BLACK_WON,
+	STATE_STAELEMATE
+} GameState;
 
 bool restart_mouse_over(float x, float y, GameState state);
 

@@ -3,6 +3,7 @@
 
 #include "config.h"
 #include "piece.h"
+#include "ui.h"
 #include "board.h"
 
 void get_piece_path(char* name, PieceColour pColour, PieceType pType);

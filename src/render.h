@@ -5,6 +5,7 @@
 
 #include "piece.h"
 #include "board.h"
+#include "ui.h"
 
 typedef struct {
 	Texture2D data[2][6];

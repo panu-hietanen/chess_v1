@@ -68,7 +68,7 @@ MoveResult board_register_move(Board* b, Point from, Point to)
 	PieceColour colourToCheck = (b->turn == PIECE_WHITE) ? PIECE_BLACK : PIECE_WHITE;
 
 	PieceType type = get_piece_type(piece);
-	PieceType capturedType = get_piece_colour(capturedPiece);
+	PieceType capturedType = get_piece_type(capturedPiece);
 
 	if (type == PIECE_PAWN)
 	{
@@ -303,7 +303,7 @@ bool board_in_check(const Board* b, Point king)
 	return false;
 }
 
-bool board_is_mate(const Board* b, PieceColour colourToCheck)
+bool board_no_moves(const Board* b, PieceColour colourToCheck)
 {
 	Board b_copy = *b;
 	b_copy.turn = colourToCheck;
@@ -322,7 +322,6 @@ bool board_is_mate(const Board* b, PieceColour colourToCheck)
 				{
 					Point from = { .x = i, .y = j };
 					Point to = { .x = ii, .y = jj };
-					//Board b_copy = *b;
 					if (board_move_valid(&b_copy, from, to)) 
 					{
 						return false;

@@ -102,7 +102,7 @@ void board_draw_moves(const Board* b, Point clicked)
 			DrawCircle(
 				BOARD_OFFSET_X + i * CELL_SIZE + CELL_SIZE / 2,
 				SCREEN_H - BOARD_OFFSET_Y - j * CELL_SIZE - CELL_SIZE / 2,
-				CELL_SIZE / 5, BROWN
+				MOVE_IND_RADIUS, BROWN
 			);
 		}
 	}

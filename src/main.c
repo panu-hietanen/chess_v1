@@ -63,12 +63,19 @@ int main() {
 						switch (moveResult)
 						{
 						case MOVE_OK:
-							board_next_turn(&b);
-							selectedPiece = point_invalid();
-							gameState = STATE_DEFAULT;
-							break;
+							if (board_no_moves(&b, PIECE_WHITE) && board_no_moves(&b, PIECE_BLACK)) 
+							{
+								gameState = STATE_STAELEMATE;
+							}
+							else
+							{
+								board_next_turn(&b);
+								selectedPiece = point_invalid();
+								gameState = STATE_DEFAULT;
+								break;
+							}
 						case MOVE_WHITE_IN_CHECK:
-							if (board_is_mate(&b, PIECE_WHITE))
+							if (board_no_moves(&b, PIECE_WHITE))
 							{
 								gameState = STATE_BLACK_WON;
 							}
@@ -80,7 +87,7 @@ int main() {
 							}
 							break;
 						case MOVE_BLACK_IN_CHECK:
-							if (board_is_mate(&b, PIECE_BLACK))
+							if (board_no_moves(&b, PIECE_BLACK))
 							{
 								gameState = STATE_WHITE_WON;
 							}

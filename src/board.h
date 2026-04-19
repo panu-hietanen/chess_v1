@@ -37,7 +37,7 @@ void board_invalidate_castle(Board* b, PieceType side);
 bool board_castle_move_ok(const Board* b, Point from, Point to);
 
 bool board_in_check(const Board* b, Point king);
-bool board_is_mate(const Board* b, PieceColour colourToCheck);
+bool board_no_moves(const Board* b, PieceColour colourToCheck);
 
 bool board_blocked_pawn(const Board* b, Point from, Point to);
 bool board_blocked_rook(const Board* b, Point from, Point to);

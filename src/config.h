@@ -7,6 +7,7 @@
 #define BOARD_COLOUR_LIGHT    GetColor(0xb58762ff)
 #define BOARD_COLOUR_DARK     GetColor(0xefd9b5ff)
 #define BACKGROUND_COLOUR	  BROWN
+#define MOVE_IND_RADIUS       10
 
 #define PIECE_W				  80
 #define PIECE_H				  80

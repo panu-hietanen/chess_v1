@@ -6,7 +6,7 @@
 
 Board board_init()
 {
-	Board b = (Board){ .turn = PIECE_WHITE };
+	Board b = (Board){ .turn = PIECE_WHITE, .enPassantPawn = point_invalid()};
 	for (int i = 0; i < BOARD_CELLS; ++i)
 	{
 		for (int j = 0; j < BOARD_CELLS; ++j)
@@ -54,10 +54,20 @@ MoveResult board_register_move(Board* b, Point from, Point to)
 	int piece = b->state[from.x][from.y];
 	b->state[from.x][from.y] = -1;
 	b->state[to.x][to.y] = piece;
+
+	if (board_is_en_passant(b, from, to))
+		b->state[b->enPassantPawn.x][b->enPassantPawn.y] = -1;
+
+	b->enPassantPawn = point_invalid();
 	PieceColour colourToCheck = (b->turn == PIECE_WHITE) ? PIECE_BLACK : PIECE_WHITE;
 
-	if (get_piece_type(piece) == PIECE_PAWN && (to.y == 0 || to.y == 7))
-		return MOVE_PROMOTE;
+	if (get_piece_type(piece) == PIECE_PAWN)
+	{
+		if (to.y == 0 || to.y == 7)
+			return MOVE_PROMOTE;
+		if (from.y == 1 && to.y == 3) b->enPassantPawn = to;
+		else if (from.y == 6 && to.y == 4) b->enPassantPawn = to;
+	}
 	Point king = board_find_king(b, colourToCheck);
 	if (board_in_check(b, king))
 		return (colourToCheck == PIECE_WHITE) ? MOVE_WHITE_IN_CHECK : MOVE_BLACK_IN_CHECK;
@@ -131,7 +141,10 @@ bool board_move_valid(const Board* b, Point from, Point to)
 
 		if (!canMove && !canCapture) return false;
 		if (!canCapture && board_blocked_pawn(b, from, to)) return false;
-		if (!canMove && b->state[to.x][to.y] < 0) return false;
+		if (!canMove && b->state[to.x][to.y] < 0)
+		{
+			if (!board_is_en_passant(b, from, to)) return false;
+		}
 		break;
 	case PIECE_ROOK:
 		if (!move_valid_rook(from, to)) return false;
@@ -166,6 +179,14 @@ bool board_move_valid(const Board* b, Point from, Point to)
 	}
 
 	return true;
+}
+
+bool board_is_en_passant(const Board* b, Point from, Point to)
+{
+	int step = (get_piece_colour(b->state[from.x][from.y]) == PIECE_WHITE) ? -1 : 1;
+	if ((b->enPassantPawn.x >= 0 && b->enPassantPawn.y >= 0) &&
+		(to.x == b->enPassantPawn.x && to.y + step == b->enPassantPawn.y)) return true;
+	return false;
 }
 
 bool board_in_check(const Board* b, Point king)
